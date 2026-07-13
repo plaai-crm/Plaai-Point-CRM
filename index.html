@@ -299,7 +299,7 @@ const I18N = {
       syncTodayHead:"อัปเดตข้อมูลลูกค้าวันนี้",syncTodaySub:"วางหรืออัปโหลดรายชื่อลูกค้าของวันนี้ (เข้าพัก/ใช้จ่าย) แล้วกดยืนยัน — ระบบกันข้อมูลซ้ำให้อัตโนมัติ",
       syncTodayDone:"คุณอัปเดตข้อมูลของวันนี้แล้ว ✓",syncTodayNotYet:"ยังไม่ได้อัปเดตข้อมูลของวันนี้",syncSubmit:"ยืนยันข้อมูลวันนี้",
       // desk
-      staffTitle:"เช็กอิน / เช็กเอาต์",guestPhone:"เบอร์โทรผู้เข้าพัก",referredBy:"เบอร์ผู้แนะนำ (ถ้ามี)",
+      staffTitle:"เช็กอิน / เช็กเอาต์",guestPhone:"เบอร์โทรผู้เข้าพัก",referredBy:"รหัสแนะนำเพื่อน (หรือเบอร์โทร)",
       roomRate:"ค่าห้อง/คืน (บาท)",nights:"จำนวนคืน",checkinBtn:"บันทึกเช็กอิน",inhouse:"กำลังเข้าพัก (ตึกนี้)",
       doCheckout:"เช็กเอาต์ & คิดแต้ม",checkoutDone:"เช็กเอาต์เรียบร้อย ส่งแบบประเมินให้ลูกค้าแล้ว",
       lookupSub:"ค้นหาลูกค้าด้วยเบอร์/ชื่อ — เห็นประวัติทุกตึก (ใช้แต้มข้ามสาขา)",lookupPh:"พิมพ์เบอร์โทรหรือชื่อ…",
@@ -370,7 +370,7 @@ const I18N = {
       syncColAdded:"Added",syncColUpdated:"Updated",syncColSkipped:"Skipped (invalid)",syncColSource:"Source",syncColBy:"By",
       syncTodayHead:"Update today's customer data",syncTodaySub:"Paste or upload today's guest list (stays/spend) and confirm — duplicates are prevented automatically",
       syncTodayDone:"You've updated today's data ✓",syncTodayNotYet:"Today's data not updated yet",syncSubmit:"Confirm today's data",
-      staffTitle:"Check-in / Check-out",guestPhone:"Guest phone",referredBy:"Referrer's phone (if any)",
+      staffTitle:"Check-in / Check-out",guestPhone:"Guest phone",referredBy:"Referral code (or phone)",
       roomRate:"Room rate/night (THB)",nights:"Nights",checkinBtn:"Save check-in",inhouse:"In-house (this property)",
       doCheckout:"Check out & award points",checkoutDone:"Checked out. Survey sent to guest.",
       lookupSub:"Find a customer by phone/name — full cross-property history",lookupPh:"Type phone or name…",
@@ -637,9 +637,9 @@ let CARD_LANG=localStorage.getItem('plaai_lang')||CARD_PARAMS.get('lang')||'th';
 if(!['th','en','zh'].includes(CARD_LANG))CARD_LANG='th';
 
 const CARDI18N={
-  th:{heroTitle:"เช็กแต้มสะสม",heroSub:"กรอกเบอร์โทรที่ลงทะเบียนไว้",welcome:"ยินดีต้อนรับสู่",phone:"เบอร์โทรศัพท์",phonePh:"เช่น +66 81 234 5678",check:"ดูแต้มของฉัน",notfound:"ไม่พบเบอร์นี้ กรุณาติดต่อพนักงาน",hi:"สวัสดีค่ะ",member:"สมาชิก",pts:"แต้ม",yourPoints:"แต้มของคุณ",worth:"เทียบเท่ายอดใช้จ่าย",expSoon:"แต้มใกล้หมดอายุ",expOn:"หมดอายุ",refTitle:"รหัสแนะนำเพื่อน",refSub:"ชวนเพื่อนพัก รับ 50 แต้มหลังเช็กเอาต์",copy:"คัดลอก",copied:"คัดลอกแล้ว",tabHist:"ประวัติ",tabRew:"รางวัล",tabPerk:"สิทธิ์",redeem:"แลก",needMore:"แต้มไม่พอ",noHist:"ยังไม่มีรายการ",noPerk:"ยังไม่มีสิทธิ์พิเศษในระดับนี้",perkAuto:"สิทธิ์ตามระดับสมาชิก",changeNo:"เปลี่ยนเบอร์",redeemed:"แลกสำเร็จ!",tabAct:"กิจกรรม",memberOnly:"เฉพาะสมาชิก",free:"ฟรี",joinFree:"เข้าร่วมฟรี",joinRedeem:"ใช้แต้มเข้าร่วม",joined:"ลงชื่อแล้ว",joinedOk:"ลงชื่อเข้าร่วมแล้ว! 🎉",noActs:"ยังไม่มีกิจกรรมสำหรับคุณ",exclusiveInvite:"กิจกรรมสำหรับสมาชิก",seeAll:"ดูทั้งหมด",pastActs:"กิจกรรมที่ผ่านมา",addPhoto:"เพิ่มรูปโปรไฟล์จาก",photoUpdated:"อัปเดตรูปโปรไฟล์แล้ว"},
-  en:{heroTitle:"Check your points",heroSub:"Enter the phone number registered with the hotel",welcome:"Welcome to",phone:"Phone number",phonePh:"e.g. +66 81 234 5678",check:"View my points",notfound:"Phone not found. Please ask our staff to register you.",hi:"Hello",member:"Member",pts:"pts",yourPoints:"Your points",worth:"Equivalent spend",expSoon:"Expiring soon",expOn:"Expires",refTitle:"Your referral code",refSub:"Refer a friend, get 50 pts each when they check out",copy:"Copy",copied:"Copied",tabHist:"History",tabRew:"Rewards",tabPerk:"Perks",redeem:"Redeem",needMore:"Not enough",noHist:"No activity yet",noPerk:"No perks at this tier yet",perkAuto:"Auto perks by tier",changeNo:"Change number",redeemed:"Redeemed!",tabAct:"Events",memberOnly:"Members only",free:"Free",joinFree:"Join free",joinRedeem:"Join with points",joined:"You're in",joinedOk:"You're signed up! 🎉",noActs:"No events for you right now",exclusiveInvite:"Exclusive member invite",seeAll:"See all",pastActs:"Past events",addPhoto:"Add profile photo from",photoUpdated:"Profile photo updated"},
-  zh:{heroTitle:"查询您的积分",heroSub:"输入在酒店登记的手机号码即可查看积分",welcome:"欢迎光临",phone:"手机号码",phonePh:"例如 +86 138 8888 6621",check:"查看我的积分",notfound:"未找到该号码，请联系前台登记会员。",hi:"您好",member:"会员",pts:"分",yourPoints:"您的积分",worth:"约合消费",expSoon:"即将到期的积分",expOn:"到期",refTitle:"您的推荐码",refSub:"推荐好友入住，好友退房后各得50分",copy:"复制",copied:"已复制",tabHist:"记录",tabRew:"兑换",tabPerk:"专属权益",redeem:"兑换",needMore:"积分不足",noHist:"暂无记录",noPerk:"当前等级暂无权益",perkAuto:"按等级自动享有",changeNo:"更换号码",redeemed:"兑换成功！",tabAct:"活动",memberOnly:"会员专属",free:"免费",joinFree:"免费参加",joinRedeem:"用积分参加",joined:"已报名",joinedOk:"报名成功！🎉",noActs:"暂时没有适合您的活动",exclusiveInvite:"会员专属邀请",seeAll:"查看全部",pastActs:"往期活动",addPhoto:"添加头像来自",photoUpdated:"头像已更新"},
+  th:{heroTitle:"เช็กแต้มสะสม",heroSub:"กรอกเบอร์โทรที่ลงทะเบียนไว้",welcome:"ยินดีต้อนรับสู่",phone:"เบอร์โทรศัพท์",phonePh:"เช่น +66 81 234 5678",check:"ดูแต้มของฉัน",notfound:"ไม่พบเบอร์นี้ กรุณาติดต่อพนักงาน",hi:"สวัสดีค่ะ",member:"สมาชิก",pts:"แต้ม",yourPoints:"แต้มของคุณ",worth:"เทียบเท่ายอดใช้จ่าย",expSoon:"แต้มใกล้หมดอายุ",expOn:"หมดอายุ",refTitle:"รหัสแนะนำเพื่อน",refSub:"ชวนเพื่อนพัก รับ 50 แต้มหลังเช็กเอาต์",refInput:"มีรหัสจากเพื่อนหรือไม่?",refInputHint:"กรอกก่อนดูแต้ม ระบบจะบันทึกผู้แนะนำให้",refInvalid:"ไม่พบรหัสนี้ กรุณาตรวจสอบอีกครั้ง",refSelf:"ไม่สามารถใช้รหัสของตัวเองได้",refUsed:"เบอร์นี้เคยใช้รหัสแนะนำแล้ว",refSaved:"บันทึกรหัสแนะนำแล้ว รอรับแต้มหลังเช็กเอาต์",copy:"คัดลอก",copied:"คัดลอกแล้ว",tabHist:"ประวัติ",tabRew:"รางวัล",tabPerk:"สิทธิ์",redeem:"แลก",needMore:"แต้มไม่พอ",noHist:"ยังไม่มีรายการ",noPerk:"ยังไม่มีสิทธิ์พิเศษในระดับนี้",perkAuto:"สิทธิ์ตามระดับสมาชิก",changeNo:"เปลี่ยนเบอร์",redeemed:"แลกสำเร็จ!",tabAct:"กิจกรรม",memberOnly:"เฉพาะสมาชิก",free:"ฟรี",joinFree:"เข้าร่วมฟรี",joinRedeem:"ใช้แต้มเข้าร่วม",joined:"ลงชื่อแล้ว",joinedOk:"ลงชื่อเข้าร่วมแล้ว! 🎉",noActs:"ยังไม่มีกิจกรรมสำหรับคุณ",exclusiveInvite:"กิจกรรมสำหรับสมาชิก",seeAll:"ดูทั้งหมด",pastActs:"กิจกรรมที่ผ่านมา",addPhoto:"เพิ่มรูปโปรไฟล์จาก",photoUpdated:"อัปเดตรูปโปรไฟล์แล้ว"},
+  en:{heroTitle:"Check your points",heroSub:"Enter the phone number registered with the hotel",welcome:"Welcome to",phone:"Phone number",phonePh:"e.g. +66 81 234 5678",check:"View my points",notfound:"Phone not found. Please ask our staff to register you.",hi:"Hello",member:"Member",pts:"pts",yourPoints:"Your points",worth:"Equivalent spend",expSoon:"Expiring soon",expOn:"Expires",refTitle:"Your referral code",refSub:"Refer a friend, get 50 pts each when they check out",refInput:"Have a friend's referral code?",refInputHint:"Enter it before viewing your points",refInvalid:"Referral code not found. Please check it.",refSelf:"You cannot use your own referral code",refUsed:"This phone has already used a referral code",refSaved:"Referral saved. Points arrive after checkout.",copy:"Copy",copied:"Copied",tabHist:"History",tabRew:"Rewards",tabPerk:"Perks",redeem:"Redeem",needMore:"Not enough",noHist:"No activity yet",noPerk:"No perks at this tier yet",perkAuto:"Auto perks by tier",changeNo:"Change number",redeemed:"Redeemed!",tabAct:"Events",memberOnly:"Members only",free:"Free",joinFree:"Join free",joinRedeem:"Join with points",joined:"You're in",joinedOk:"You're signed up! 🎉",noActs:"No events for you right now",exclusiveInvite:"Exclusive member invite",seeAll:"See all",pastActs:"Past events",addPhoto:"Add profile photo from",photoUpdated:"Profile photo updated"},
+  zh:{heroTitle:"查询您的积分",heroSub:"输入在酒店登记的手机号码即可查看积分",welcome:"欢迎光临",phone:"手机号码",phonePh:"例如 +86 138 8888 6621",check:"查看我的积分",notfound:"未找到该号码，请联系前台登记会员。",hi:"您好",member:"会员",pts:"分",yourPoints:"您的积分",worth:"约合消费",expSoon:"即将到期的积分",expOn:"到期",refTitle:"您的推荐码",refSub:"推荐好友入住，好友退房后各得50分",refInput:"有朋友的推荐码吗？",refInputHint:"查看积分前输入推荐码",refInvalid:"未找到推荐码，请重新检查。",refSelf:"不能使用自己的推荐码",refUsed:"此手机号已经使用过推荐码",refSaved:"推荐码已保存，退房后获得积分。",copy:"复制",copied:"已复制",tabHist:"记录",tabRew:"兑换",tabPerk:"专属权益",redeem:"兑换",needMore:"积分不足",noHist:"暂无记录",noPerk:"当前等级暂无权益",perkAuto:"按等级自动享有",changeNo:"更换号码",redeemed:"兑换成功！",tabAct:"活动",memberOnly:"会员专属",free:"免费",joinFree:"免费参加",joinRedeem:"用积分参加",joined:"已报名",joinedOk:"报名成功！🎉",noActs:"暂时没有适合您的活动",exclusiveInvite:"会员专属邀请",seeAll:"查看全部",pastActs:"往期活动",addPhoto:"添加头像来自",photoUpdated:"头像已更新"},
 };
 const ct=k=>(CARDI18N[CARD_LANG]&&CARDI18N[CARD_LANG][k])||k;
 const CARD_TIER={silver:{th:"Silver",en:"Silver",zh:"银卡"},gold:{th:"Gold",en:"Gold",zh:"金卡"},platinum:{th:"Platinum",en:"Platinum",zh:"白金卡"}};
@@ -667,12 +667,14 @@ function viewCardLogin(){
     <div style="background:linear-gradient(150deg,var(--brand),var(--brand-dark));color:#fff;border-radius:20px;padding:26px 22px;margin-bottom:16px">${bWelcome}<h1 style="margin:0 0 6px;font-size:22px">${ct('heroTitle')}</h1><p style="margin:0;opacity:.9;font-size:13.5px">${ct('heroSub')}</p></div>
     <div class="card pad">
       <label class="fld"><span class="lb">${ct('phone')}</span><input id="cardPhone" inputmode="tel" placeholder="${ct('phonePh')}" value="${localStorage.getItem('plaai_phone')||''}"></label>
+      <label class="fld"><span class="lb">${ct('refInput')} <span style="font-weight:500">(${CARD_LANG==='th'?'ไม่บังคับ':CARD_LANG==='zh'?'可选':'optional'})</span></span><input id="cardRef" autocomplete="off" placeholder="PLAAI-8815" value="${CARD_PARAMS.get('ref')||''}" style="text-transform:uppercase"><span class="muted" style="display:block;font-size:11px;margin-top:5px">${ct('refInputHint')}</span></label>
       <button class="btn primary block" onclick="cardLogin()">${ct('check')}</button>
       <div class="muted" style="font-size:12px;margin-top:12px">Demo: <code class="mono" style="cursor:pointer" onclick="document.getElementById('cardPhone').value='+66 81 234 5678'">+66 81 234 5678</code> · <code class="mono" style="cursor:pointer" onclick="document.getElementById('cardPhone').value='+86 138 8888 6621'">+86 138 8888 6621</code></div>
     </div></div>`;
 }
 async function cardLogin(){
   const v=$("#cardPhone").value.trim();
+  const ref=($("#cardRef")&&$("#cardRef").value||'').trim();
   let m;
   if(DB.online){
     m=await DB.memberByPhone(v);               // member RPC: full registered name, no spend
@@ -681,7 +683,10 @@ async function cardLogin(){
     m=findMemberByPhone(v);
   }
   if(!m){ toast(ct('notfound')); return; }
+  const referral=registerReferral(ref,m,CARD_BRANCH||m.home,'customer');
+  if(!referral.ok){ toast(ct(referral.reason)); return; }
   CUSTOMER=m; localStorage.setItem('plaai_phone',v); render();
+  if(referral.created)toast(ct('refSaved')+' ✓');
 }
 
 /* ====================== helpers ======================= */
@@ -690,6 +695,23 @@ const $=(s,el=document)=>el.querySelector(s);
 const fmt=n=>Number(n).toLocaleString('en-US');
 const memberById=id=>MEMBERS.find(m=>m.id===id);
 const digits=s=>(s||"").replace(/\D/g,'');
+function findMemberByReferral(value){
+  const raw=(value||'').trim(); if(!raw)return null;
+  const code=raw.toUpperCase();
+  return MEMBERS.find(m=>(m.refCode||'').toUpperCase()===code)||findMemberByPhone(raw);
+}
+function registerReferral(value,friend,branch,source){
+  const raw=(value||'').trim(); if(!raw)return {ok:true,created:false};
+  const referrer=findMemberByReferral(raw);
+  if(!referrer)return {ok:false,reason:'refInvalid'};
+  const friendPhone=(friend&&friend.phone)||'';
+  if((friend&&friend.id===referrer.id)||(friendPhone&&digits(friendPhone)===digits(referrer.phone)))return {ok:false,reason:'refSelf'};
+  const used=REFERRALS.some(r=>digits(r.friendPhone)===digits(friendPhone));
+  if(used)return {ok:false,reason:'refUsed'};
+  const row={id:NEXT_REF_ID++,referrerId:referrer.id,friendId:(friend&&friend.id)||0,friendPhone,friendName:(friend&&friend.name)||'Guest',branch:branch||referrer.home,status:'pending',date:today(),bonus:CONFIG.referrerBonus,source:source||'staff',refCode:referrer.refCode};
+  REFERRALS.push(row); DB.save('referrals',row);
+  return {ok:true,created:true,referrer,row};
+}
 const tierPill=tier=>`<span class="pill ${tier==='platinum'?'green':tier==='gold'?'gold':'gray'}">${t('tiers.'+tier)}</span>`;
 function toast(msg){ const el=$("#toast"); el.textContent=msg; el.classList.add("show"); clearTimeout(el._t); el._t=setTimeout(()=>el.classList.remove("show"),2400); }
 /* ---- member photo / avatar ---- */
@@ -815,6 +837,7 @@ function viewLogin(){
           <input id="custPhone" placeholder="${t('txt.enterPhone')} (+66 / +86)" list="phoneHints">
           <button class="btn primary" onclick="customerLogin()">${t('txt.checkPoints')}</button>
         </div>
+        <input id="custRef" placeholder="${th?'รหัสแนะนำเพื่อน (ถ้ามี) เช่น PLAAI-8815':'Referral code (optional), e.g. PLAAI-8815'}" style="margin-top:8px;text-transform:uppercase">
         ${DB.online?'':`<datalist id="phoneHints">${MEMBERS.slice(0,6).map(m=>`<option value="${m.phone}">`).join("")}</datalist>
         <div class="muted" style="font-size:11px;margin-top:8px">${th?'ลองใช้เบอร์สาธิต:':'Try demo phone:'} <code class="mono" style="cursor:pointer" onclick="document.getElementById('custPhone').value='+66 81 234 5678'">+66 81 234 5678</code></div>`}
       </div>
@@ -857,6 +880,7 @@ function loginAs(user){ // internal shortcut (no UI) — real sign-in uses doLog
 }
 async function customerLogin(){
   const phone=$("#custPhone").value.trim();
+  const ref=($("#custRef")&&$("#custRef").value||'').trim();
   let m;
   if(DB.online){
     m=await DB.memberByPhone(phone);           // member RPC: full registered name, no spend
@@ -865,7 +889,10 @@ async function customerLogin(){
     m=findMemberByPhone(phone);
   }
   if(!m){ toast(LANG==='th'?'ไม่พบเบอร์นี้ในระบบ':'Phone not found'); return; }
+  const referral=registerReferral(ref,m,m.home,'customer');
+  if(!referral.ok){ const msg={refInvalid:{th:'ไม่พบรหัสนี้ กรุณาตรวจสอบอีกครั้ง',en:'Referral code not found'},refSelf:{th:'ไม่สามารถใช้รหัสของตัวเองได้',en:'You cannot use your own code'},refUsed:{th:'เบอร์นี้เคยใช้รหัสแนะนำแล้ว',en:'This phone already used a referral code'}}[referral.reason]; toast((msg&&msg[LANG])||'Invalid referral code'); return; }
   CUSTOMER=m; localStorage.setItem('plaai_phone',phone); render();
+  if(referral.created)toast(LANG==='th'?'บันทึกรหัสแนะนำแล้ว ✓':'Referral saved ✓');
 }
 
 /* ====================== ADMIN ======================= */
@@ -1191,12 +1218,21 @@ function deleteReward(id){REWARDS=REWARDS.filter(x=>x.id!==id);toast(LANG==='th'
 /* ----- Referral ----- */
 function adminReferral(){
   const pending=REFERRALS.filter(r=>r.status==="pending");
-  const rows=REFERRALS.slice().sort((a,b)=>b.date.localeCompare(a.date)).map(r=>{ const ref=memberById(r.referrerId); return `<tr><td>${r.date}</td><td>${ref?ref.name.split(' / ')[0]:'-'}<div class="muted" style="font-size:11.5px">${ref?ref.phone:''}</div></td><td>${r.friendName}<div class="muted" style="font-size:11.5px">${r.friendPhone}</div></td><td><span class="prop-chip"><span class="dot" style="background:${propColor(r.branch)}"></span>${propName(r.branch)}</span></td><td class="num">+${r.bonus}</td><td>${r.status==="approved"?`<span class="pill green">${LANG==='th'?'อนุมัติแล้ว':'Approved'}</span>`:`<span class="pill red">${t('txt.pendingApproval')}</span>`}</td><td style="text-align:right">${r.status==="pending"?`<button class="btn primary sm" onclick="approveRef(${r.id})">✓ ${t('txt.approve')}</button>`:'—'}</td></tr>`; }).join("");
+  const rows=REFERRALS.slice().sort((a,b)=>b.date.localeCompare(a.date)).map(r=>{ const ref=memberById(r.referrerId); return `<tr><td>${r.date}</td><td>${ref?ref.name.split(' / ')[0]:'-'}<div class="muted" style="font-size:11.5px">${ref?ref.phone:''}</div></td><td>${r.friendName}<div class="muted" style="font-size:11.5px">${r.friendPhone}</div></td><td><span class="prop-chip"><span class="dot" style="background:${propColor(r.branch)}"></span>${propName(r.branch)}</span></td><td class="num">+${r.bonus} ${LANG==='th'?'ต่อคน':'each'}</td><td>${r.status==="approved"?`<span class="pill green">${LANG==='th'?'อนุมัติแล้ว':'Approved'}</span>`:`<span class="pill red">${t('txt.pendingApproval')}</span>`}</td><td style="text-align:right">${r.status==="pending"?`<button class="btn primary sm" onclick="approveRef(${r.id})">✓ ${t('txt.approve')}</button>`:'—'}</td></tr>`; }).join("");
   return `<div class="section-title"><div><h2>${t('nav.referral')} · "ชวนพักชวนคุ้ม"</h2><div class="muted" style="font-size:13px">${t('txt.referralSub')}</div></div></div>
     ${pending.length?`<div class="hint" style="margin-bottom:14px">⏳ ${pending.length} ${LANG==='th'?'รายการรออนุมัติ — แต้มจ่ายเมื่อเพื่อนเช็กเอาต์และจ่ายเงินแล้ว':'pending — points paid after friend checks out & pays'}</div>`:''}
     <div class="card"><table><thead><tr><th>${t('common.date')}</th><th>${t('txt.referrer')}</th><th>${t('txt.friend')}</th><th>${t('common.branch')}</th><th class="num">${t('common.points')}</th><th>${t('common.status')}</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>`;
 }
-function approveRef(id){ const r=REFERRALS.find(x=>x.id===id); if(!r||r.status==="approved")return; r.status="approved"; const ref=memberById(r.referrerId); if(ref)ref.points+=r.bonus; TX.push({id:NEXT_TX_ID++,memberId:r.referrerId,date:today(),type:"referral",branch:r.branch,pts:r.bonus,exp:expiryFor(today()),note:{th:"แนะนำเพื่อนสำเร็จ",en:"Referral approved"}}); DB.save('referrals',r); toast(LANG==='th'?`อนุมัติแล้ว +${r.bonus} แต้ม`:`Approved +${r.bonus} pts`); rerenderAdmin(); }
+function approveRef(id){
+  const r=REFERRALS.find(x=>x.id===id); if(!r||r.status==="approved")return;
+  const ref=memberById(r.referrerId), friend=memberById(r.friendId)||findMemberByPhone(r.friendPhone);
+  if(!ref||!friend){ toast(LANG==='th'?'ยังอนุมัติไม่ได้: เพื่อนต้องเช็กเอาต์และเป็นสมาชิกก่อน':'Cannot approve yet: friend must check out and become a member'); return; }
+  r.status="approved"; r.friendId=friend.id; ref.points+=r.bonus; friend.points+=r.bonus;
+  TX.push({id:NEXT_TX_ID++,memberId:ref.id,date:today(),type:"referral",branch:r.branch,pts:r.bonus,exp:expiryFor(today()),note:{th:"แนะนำเพื่อนสำเร็จ",en:"Referral approved"}});
+  TX.push({id:NEXT_TX_ID++,memberId:friend.id,date:today(),type:"referral",branch:r.branch,pts:r.bonus,exp:expiryFor(today()),note:{th:"โบนัสจากรหัสแนะนำเพื่อน",en:"Referral code bonus"}});
+  DB.save('members',ref); DB.save('members',friend); DB.save('referrals',r);
+  toast(LANG==='th'?`อนุมัติแล้ว ทั้งคู่ได้รับ +${r.bonus} แต้ม ✓`:`Approved · both received +${r.bonus} pts ✓`); rerenderAdmin();
+}
 
 /* ----- Feedback (admin sees all as HQ oversight) ----- */
 let FB_BRANCH="all";
@@ -1317,10 +1353,11 @@ function adminChannels(){
         LINE OA / WeChat OA / WhatsApp so a customer taps it, enters their
         phone, and sees their own card & points. ---- */
 function cardLinkOrigin(){ return location.origin+location.pathname; }
-function buildCardLink(branch,lang){
+function buildCardLink(branch,lang,refCode){
   const p=new URLSearchParams(); p.set('view','card');
   if(branch) p.set('branch',branch);
   if(lang&&lang!=='th') p.set('lang',lang);
+  if(refCode)p.set('ref',refCode);
   return cardLinkOrigin()+'?'+p.toString();
 }
 function currentCardLink(){
@@ -1689,8 +1726,8 @@ function staffDesk(p){
         <label class="fld"><span class="lb">${t('txt.guestPhone')}</span><input id="ci_phone" placeholder="+66 / +86 …"></label>
         <label class="fld"><span class="lb">${t('common.name')}</span><input id="ci_name" placeholder="${monthly?(th?'ชื่อผู้เช่า':'Tenant name'):(th?'ชื่อผู้เข้าพัก':'Guest name')}"></label>
         <div class="row"><label class="fld"><span class="lb">${rateLabel}</span><input id="ci_rate" type="number" value="${monthly?8000:1500}"></label><label class="fld"><span class="lb">${qtyLabel}</span><input id="ci_nights" type="number" value="${monthly?1:3}"></label></div>
-        <label class="fld"><span class="lb">${t('txt.referredBy')} ${t('common.optional')}</span><input id="ci_ref" placeholder="+66 81 234 5678"></label>
-        <div class="hint">${monthly?(th?'บันทึกค่าเช่า/เดือน × จำนวนเดือนที่ชำระ':'Rent/month × months paid'):(th?'ถ้าลูกค้าแจ้งเบอร์ผู้แนะนำ ระบบสร้าง referral "รออนุมัติ" อัตโนมัติ':'If guest gives a referrer phone, a "pending" referral is auto-created')}</div>
+        <label class="fld"><span class="lb">${t('txt.referredBy')} ${t('common.optional')}</span><input id="ci_ref" placeholder="PLAAI-8815" style="text-transform:uppercase"><span class="muted" style="display:block;font-size:11px;margin-top:5px">${th?'รับรหัสจากบัตรสมาชิก หรือใช้เบอร์โทรผู้แนะนำก็ได้':'Use the code from the member card, or the referrer phone'}</span></label>
+        <div class="hint">${monthly?(th?'บันทึกค่าเช่า/เดือน × จำนวนเดือนที่ชำระ':'Rent/month × months paid'):(th?'ระบบตรวจรหัสและสร้างรายการ “รออนุมัติ” แต้มจะเข้าเมื่อเพื่อนเช็กเอาต์':'The code is verified and a pending referral is created; points arrive after checkout')}</div>
         <button class="btn primary block" style="margin-top:12px" onclick="doCheckin('${p}')">${monthly?(th?'บันทึกเข้าพัก/ชำระเดือนนี้':'Save move-in / month'):t('txt.checkinBtn')}</button>`;
   }
   const cardTitle=mode==='once'?(th?'บันทึกค่าใช้จ่ายรายครั้ง':'One-time charge'):(th?'เช็กอิน':'Check-in');
@@ -1784,8 +1821,15 @@ function doCheckin(p){
   const phone=$("#ci_phone").value.trim(), name=$("#ci_name").value.trim()||"Guest";
   const rate=parseInt($("#ci_rate").value)||0, nights=parseInt($("#ci_nights").value)||1, ref=$("#ci_ref").value.trim();
   if(!phone){toast(LANG==='th'?'กรุณากรอกเบอร์โทร':'Enter phone');return;}
+  const existing=findMemberByPhone(phone);
+  const referral=registerReferral(ref,existing||{id:0,phone,name},p,'staff');
+  if(!referral.ok){
+    const th=LANG==='th';
+    const msg={refInvalid:th?'ไม่พบรหัสแนะนำ กรุณาตรวจสอบอีกครั้ง':'Referral code not found',refSelf:th?'ลูกค้าไม่สามารถใช้รหัสของตัวเองได้':'Customer cannot use their own code',refUsed:th?'เบอร์นี้เคยใช้รหัสแนะนำแล้ว':'This phone already used a referral code'}[referral.reason];
+    toast(msg||'Invalid referral code'); return;
+  }
   INHOUSE.push({id:NEXT_INHOUSE_ID++,phone,name,branch:p,rate,nights,referrer:ref});
-  if(ref){ const refMember=findMemberByPhone(ref); REFERRALS.push({id:NEXT_REF_ID++,referrerId:refMember?refMember.id:MEMBERS[0].id,friendPhone:phone,friendName:name,branch:p,status:"pending",date:today(),bonus:CONFIG.referrerBonus}); toast(LANG==='th'?'เช็กอินแล้ว + referral รออนุมัติ':'Checked in + referral pending'); }
+  if(referral.created){ toast(LANG==='th'?'เช็กอินแล้ว · บันทึกรหัสแนะนำ รออนุมัติแต้ม':'Checked in · referral saved, points pending'); }
   else toast(LANG==='th'?'บันทึกเช็กอินเรียบร้อย':'Check-in saved');
   render();
 }
@@ -1811,7 +1855,7 @@ function doCheckout(id){
 /* ====================== CUSTOMER PORTAL ======================= */
 function viewCustomerPortal(){
   const m=CUSTOMER; const worth=m.points*CONFIG.bahtPerPoint;
-  const shareLink=buildCardLink(CARD_BRANCH||'', CARD_LANG||'th');
+  const shareLink=buildCardLink(CARD_BRANCH||'', CARD_LANG||'th',m.refCode);
   const shareMsg=(CARD_LANG==='zh'?'查看我的 Plaai 会员卡和积分：':CARD_LANG==='en'?'View my Plaai member card & points: ':'ดูบัตรสมาชิก Plaai และแต้มของฉัน: ');
   const shareTitle=(CARD_LANG==='zh'?'保存会员卡':CARD_LANG==='en'?'Save member card':'บันทึกบัตรสมาชิก');
   const shareBtn=(CARD_LANG==='zh'?'保存会员卡':CARD_LANG==='en'?'Save card':'บันทึกบัตร');
@@ -1903,7 +1947,7 @@ function copyCode(c){ navigator.clipboard&&navigator.clipboard.writeText(c); toa
 function custSetPhoto(pf){ if(!CUSTOMER)return; CUSTOMER.photo=channelAvatar(pf); CUSTOMER.photoSrc=pf; DB.save('members',CUSTOMER); toast(ct('photoUpdated')+" ✓"); render(); }
 async function custUploadPhoto(e){ const f=e.target.files[0]; e.target.value=''; if(!f||!CUSTOMER)return; try{ CUSTOMER.photo=await compressImageFile(f,'photo'); CUSTOMER.photoSrc='upload'; DB.save('members',CUSTOMER); toast(ct('photoUpdated')+" ✓"); render(); }catch(err){ toast(CARD_LANG==='th'?'ไฟล์รูปไม่ถูกต้อง':'Invalid image'); } }
 function custShareCard(){
-  const link=buildCardLink(CARD_BRANCH||'', CARD_LANG||'th');
+  const link=buildCardLink(CARD_BRANCH||'', CARD_LANG||'th',CUSTOMER&&CUSTOMER.refCode);
   const msg=(CARD_LANG==='zh'?'查看我的 Plaai 会员卡和积分：':CARD_LANG==='en'?'View my Plaai member card & points: ':'ดูบัตรสมาชิก Plaai และแต้มของฉัน: ');
   if(navigator.share){ navigator.share({title:'Plaai Point', text:msg, url:link}).catch(()=>{}); return; }
   if(navigator.clipboard) navigator.clipboard.writeText(link);
@@ -2123,7 +2167,8 @@ if(CARD_MODE){
   document.documentElement.lang=CARD_LANG;
   // ถ้าเคยกรอกเบอร์ไว้ เปิดบัตรให้อัตโนมัติ (ลูกค้าไม่ต้องกรอกซ้ำ)
   const saved=localStorage.getItem('plaai_phone');
-  if(saved){ const m=findMemberByPhone(saved); if(m)CUSTOMER=m; }
+  // ถ้าเปิดลิงก์ที่มีรหัสแนะนำ ให้แสดงช่องยืนยันก่อน แม้เครื่องจะจำเบอร์เดิมไว้
+  if(saved&&!CARD_PARAMS.get('ref')){ const m=findMemberByPhone(saved); if(m)CUSTOMER=m; }
 }
 render();
 </script>
