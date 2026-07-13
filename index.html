@@ -104,12 +104,19 @@
   .admin-layout{display:grid;grid-template-columns:220px 1fr;gap:18px;align-items:start}
   @media(max-width:820px){.admin-layout{grid-template-columns:1fr}}
 
-  .device{max-width:400px;margin:0 auto;background:#fff;border-radius:26px;border:1px solid var(--line);box-shadow:0 10px 40px rgba(16,24,40,.12);overflow:hidden}
-  .device .status{height:22px;background:var(--brand-dark)}
-  .mcard{background:linear-gradient(135deg,var(--brand),var(--brand-dark));color:#fff;border-radius:18px;padding:18px;position:relative;overflow:hidden}
-  .mcard::after{content:"";position:absolute;right:-40px;top:-40px;width:140px;height:140px;background:rgba(255,255,255,.08);border-radius:50%}
-  .mcard .tier{position:absolute;right:16px;top:16px;background:var(--gold);color:#fff;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:800}
-  .pts-big{font-size:40px;font-weight:800;line-height:1}
+  .device{max-width:390px;margin:0 auto;background:#fffdf9;border-radius:24px;border:1px solid #ebe7df;box-shadow:0 10px 36px rgba(84,75,61,.10);overflow:hidden}
+  .device .status{height:12px;background:#e9dfd0}
+  .mcard{background:linear-gradient(145deg,#fff8e9,#f6dfbd);color:#554c40;border:1px solid rgba(126,105,76,.12);border-radius:18px;padding:14px 15px;position:relative;overflow:hidden;box-shadow:0 8px 22px rgba(111,91,64,.10)}
+  .mcard.tier-gold{background:linear-gradient(145deg,#fff8df,#f2cf78)}
+  .mcard.tier-platinum{background:linear-gradient(145deg,#eef8ef,#bfe1ca)}
+  .mcard::after{content:"";position:absolute;right:-34px;bottom:-52px;width:126px;height:126px;background:rgba(255,255,255,.35);border-radius:50%}
+  .mcard .tier{position:absolute;right:14px;top:13px;background:rgba(255,255,255,.72);color:#625647;border:1px solid rgba(98,86,71,.10);padding:3px 10px;border-radius:999px;font-size:10.5px;font-weight:800;letter-spacing:.2px}
+  .pts-big{font-size:32px;font-weight:800;line-height:1;letter-spacing:-.6px}
+  .tier-admin-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  @media(max-width:900px){.tier-admin-grid{grid-template-columns:1fr}}
+  .tier-rule{padding:16px;border-top:5px solid #d8c7ae}
+  .tier-rule.gold-level{border-top-color:#e5bb51}.tier-rule.platinum-level{border-top-color:#8fc4a2}
+  @media(max-width:480px){.device>div[style*="padding:16px"]{padding:12px!important}.mcard{padding:13px 14px}.pts-big{font-size:30px}}
 
   .modal-bg{position:fixed;inset:0;background:rgba(16,24,40,.5);display:grid;place-items:center;z-index:100;padding:16px}
   .modal{background:#fff;border-radius:16px;max-width:560px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3);max-height:92vh;overflow:auto}
@@ -191,9 +198,9 @@ const DB = {
     if(this.online){ try{ await this.client.from(table).upsert(row); }catch(e){ console.warn('save fail',e);} }
     return row;
   },
-  /* ---- Customer lookups (live mode) — go through safe RPC functions only.
-     The database masks the name and never returns spend, so a stranger who
-     knows someone's phone number cannot harvest their personal data. ---- */
+  /* ---- Customer lookups (live mode) — go through the member RPC only.
+     The member card now uses the full registered name. Production should add
+     OTP verification before returning personal data. ---- */
   async memberByPhone(phone){
     if(!this.online) return null;
     try{
@@ -217,7 +224,7 @@ const DB = {
 const I18N = {
   th:{
     roles:{admin:"หลังบ้าน (Admin)",member:"หน้าสมาชิก",staff:"เคาน์เตอร์",survey:"แบบประเมิน"},
-    nav:{dashboard:"ภาพรวม",members:"สมาชิก",activities:"ประชาสัมพันธ์",promo:"ส่งโปรโมชั่น",rules:"กฎ & แต้มหมดอายุ",rewards:"ของรางวัล",referral:"แนะนำเพื่อน",feedback:"ผลประเมิน",security:"ความปลอดภัย",export:"ส่งออกข้อมูล",channels:"เชื่อมต่อช่องทาง",sync:"นำเข้าข้อมูลอัตโนมัติ"},
+    nav:{dashboard:"ภาพรวม",members:"สมาชิก",tiers:"ระดับสมาชิก",activities:"ประชาสัมพันธ์",promo:"ส่งโปรโมชั่น",rules:"กฎ & แต้มหมดอายุ",rewards:"ของรางวัล",referral:"แนะนำเพื่อน",feedback:"ผลประเมิน",security:"ความปลอดภัย",export:"ส่งออกข้อมูล",channels:"เชื่อมต่อช่องทาง",sync:"นำเข้าข้อมูลอัตโนมัติ"},
     snav:{desk:"เช็กอิน/เช็กเอาต์",lookup:"ค้นหาลูกค้า",reviews:"รีวิวตึกนี้",sync:"อัปเดตข้อมูลวันนี้"},
     kpi:{members:"สมาชิกทั้งหมด",points:"แต้มหมุนเวียน",revenue:"ยอดขายสะสม",avgrating:"คะแนนเฉลี่ย",referrals:"แนะนำสำเร็จ",responses:"แบบประเมินตอบกลับ"},
     common:{search:"ค้นหา…",all:"ทุกสาขา",save:"บันทึก",cancel:"ยกเลิก",close:"ปิด",confirm:"ยืนยัน",delete:"ลบ",
@@ -297,7 +304,7 @@ const I18N = {
   },
   en:{
     roles:{admin:"Admin",member:"Member",staff:"Front Desk",survey:"Survey"},
-    nav:{dashboard:"Overview",members:"Members",activities:"Activities & PR",promo:"Send Promo",rules:"Rules & Expiry",rewards:"Rewards",referral:"Referrals",feedback:"Feedback",security:"Security",export:"Export",channels:"Channels",sync:"Auto Data Import"},
+    nav:{dashboard:"Overview",members:"Members",tiers:"Member tiers",activities:"Activities & PR",promo:"Send Promo",rules:"Rules & Expiry",rewards:"Rewards",referral:"Referrals",feedback:"Feedback",security:"Security",export:"Export",channels:"Channels",sync:"Auto Data Import"},
     snav:{desk:"Check-in/out",lookup:"Find customer",reviews:"This property's reviews",sync:"Today's Update"},
     kpi:{members:"Total Members",points:"Points in Circulation",revenue:"Cumulative Revenue",avgrating:"Avg Rating",referrals:"Successful Referrals",responses:"Survey Responses"},
     common:{search:"Search…",all:"All branches",save:"Save",cancel:"Cancel",close:"Close",confirm:"Confirm",delete:"Delete",
@@ -390,6 +397,9 @@ let ACCOUNTS = [
 
 /* ====================== Config ======================= */
 let CONFIG = { bahtPerPoint:100, referrerBonus:50, referrerRepeat:15, welcomeBonus:20, surveyBonus:5, minRedeem:100, expiryMonths:12, approvalThreshold:100, anomalyCheckoutPts:300 };
+/* เกณฑ์ระดับสมาชิกของสำนักงานใหญ่: สมาชิกปกติเลื่อนระดับจากแต้มอัตโนมัติ
+   ส่วน tierMode='manual' ใช้สำหรับ VIP/คนรู้จักเจ้าของกิจการที่แอดมินกำหนดเอง */
+let TIER_RULES={silver:0,gold:200,platinum:400};
 
 /* ====================== Demo data ======================= */
 function addMonths(dateStr,months){ const d=new Date(dateStr); d.setMonth(d.getMonth()+months); return d.toISOString().slice(0,10); }
@@ -410,7 +420,7 @@ let TX = [
   {id:2, memberId:2, date:"2026-07-07", type:"stay",    branch:"bowin1",  pts:126, exp:expiryFor("2026-07-07"), note:{th:"พัก 14 คืน @900",en:"14 nights @900"}},
   {id:3, memberId:2, date:"2026-07-07", type:"survey",  branch:"bowin1",  pts:5,   exp:expiryFor("2026-07-07"), note:{th:"ตอบแบบประเมิน",en:"Survey completed"}},
   {id:4, memberId:1, date:"2026-07-06", type:"referral",branch:"prime",   pts:50,  exp:expiryFor("2026-07-06"), note:{th:"แนะนำเพื่อนสำเร็จ",en:"Referral approved"}},
-  {id:5, memberId:1, date:"2026-05-10", type:"stay",    branch:"bowin1",  pts:36,  exp:expiryFor("2026-05-10"), note:{th:"พัก 4 คืน @900 (ข้ามตึก)",en:"4 nights @900 (cross-property)"}},
+  {id:5, memberId:1, date:"2026-05-10", type:"stay",    branch:"bowin1",  pts:36,  exp:expiryFor("2026-05-10"), note:{th:"พัก 4 คืน @900",en:"4 nights @900"}},
 ];
 let NEXT_TX_ID = 6;
 
@@ -443,12 +453,26 @@ let REWARDS=[
   {id:5,name:{th:"รถรับส่งสนามบิน (Expat)",en:"Airport transfer"},cost:300,cat:"partner",active:true,imgs:[ph("✈️","#e0a92b")]},
 ];
 let NEXT_REWARD_ID=6;
-const PERKS=[
+let PERKS=[
+  {th:"รับข่าวสารและราคาสมาชิก",en:"Member news and rates",tier:"silver"},
   {th:"เช็กเอาต์เลทถึง 14:00 น.",en:"Late check-out until 14:00",tier:"gold"},
   {th:"ซักรีดฟรี วันละ 2 ชิ้น",en:"Free laundry, 2 items/day",tier:"platinum"},
   {th:"อัปเกรดห้องเมื่อว่าง",en:"Room upgrade when available",tier:"platinum"},
 ];
 const tierRank={silver:1,gold:2,platinum:3};
+const TIER_KEYS=['silver','gold','platinum'];
+function autoTierForPoints(points){
+  const p=Math.max(0,Number(points)||0);
+  if(p>=TIER_RULES.platinum)return 'platinum';
+  if(p>=TIER_RULES.gold)return 'gold';
+  return 'silver';
+}
+function syncMemberTier(m){
+  if(!m)return;
+  if(m.tierMode==='manual')m.tier=TIER_KEYS.includes(m.manualTier)?m.manualTier:(m.tier||'silver');
+  else { m.tierMode='auto'; m.tier=autoTierForPoints(m.points); }
+}
+function syncMemberTiers(){ MEMBERS.forEach(syncMemberTier); }
 
 let PROMOS=[
   {id:1,date:"2026-07-01",msg:"🎉 Plaai Plus ลด 12% สำหรับสมาชิก Gold ขึ้นไป",count:186,filters:"Gold+ · ทุกตึก"},
@@ -519,15 +543,18 @@ function upsertMembers(rows, defaultHome, source, pid){
     if(existing){
       // สมาชิกเดิม (จับคู่ด้วยเบอร์โทรที่ normalize แล้ว) → อัปเดตแทนการสร้างซ้ำ
       if(r.name)existing.name=r.name;
-      if(r.tier)existing.tier=r.tier;
+      if(r.tier&&TIER_KEYS.includes(r.tier.toLowerCase())){ existing.tierMode='manual'; existing.manualTier=r.tier.toLowerCase(); }
       if(typeof r.addSpend==='number')existing.spend+=r.addSpend;
       if(typeof r.addPoints==='number')existing.points+=r.addPoints;
+      syncMemberTier(existing);
       DB.save('members',existing); updated++;
     } else {
       const validTiers=['silver','gold','platinum'];
       const tier=validTiers.includes((r.tier||'').toLowerCase())?r.tier.toLowerCase():'silver';
       const home=PROPERTIES.some(p=>p.id===r.home)?r.home:defaultHome;
-      const m={id:NEXT_MEMBER_ID++, phone, name:r.name||(LANG==='th'?'สมาชิกใหม่':'New member'), tier, points:r.addPoints||0, spend:r.addSpend||0, joined:today(), home, refCode:"PLAAI-"+Math.floor(1000+Math.random()*9000), photo:""};
+      const hasManualTier=TIER_KEYS.includes((r.tier||'').toLowerCase());
+      const m={id:NEXT_MEMBER_ID++, phone, name:r.name||(LANG==='th'?'สมาชิกใหม่':'New member'), tier, tierMode:hasManualTier?'manual':'auto', manualTier:hasManualTier?tier:'', points:r.addPoints||0, spend:r.addSpend||0, joined:today(), home, refCode:"PLAAI-"+Math.floor(1000+Math.random()*9000), photo:""};
+      syncMemberTier(m);
       MEMBERS.push(m); DB.save('members',m); added++;
     }
   });
@@ -635,7 +662,7 @@ async function cardLogin(){
   const v=$("#cardPhone").value.trim();
   let m;
   if(DB.online){
-    m=await DB.memberByPhone(v);               // safe RPC: masked name, no spend
+    m=await DB.memberByPhone(v);               // member RPC: full registered name, no spend
     if(m){ const tx=await DB.memberTx(v); TX=TX.filter(x=>x.memberId!==m.id).concat(tx); }
   }else{
     m=findMemberByPhone(v);
@@ -650,10 +677,6 @@ const $=(s,el=document)=>el.querySelector(s);
 const fmt=n=>Number(n).toLocaleString('en-US');
 const memberById=id=>MEMBERS.find(m=>m.id===id);
 const digits=s=>(s||"").replace(/\D/g,'');
-/* Privacy: customer-facing pages show a masked name (e.g. "สมชาย" → "สมช***")
-   so someone who merely knows a phone number can't harvest the full name.
-   In live mode the database masks it server-side too (get_member_by_phone). */
-function maskName(n){ const f=((n||'').split(' / ')[0].trim().split(/\s+/)[0])||''; if(f.includes('*'))return f; return f.slice(0,3)+'***'; }
 const tierPill=tier=>`<span class="pill ${tier==='platinum'?'green':tier==='gold'?'gold':'gray'}">${t('tiers.'+tier)}</span>`;
 function toast(msg){ const el=$("#toast"); el.textContent=msg; el.classList.add("show"); clearTimeout(el._t); el._t=setTimeout(()=>el.classList.remove("show"),2400); }
 /* ---- member photo / avatar ---- */
@@ -708,6 +731,7 @@ function findMemberByPhone(p){ const d=digits(p); return MEMBERS.find(m=>digits(
 
 /* ====================== ROOT router ======================= */
 function render(){
+  syncMemberTiers();
   const root=$("#root");
   if(CUSTOMER){ root.innerHTML=customerShell(viewCustomerPortal()); return; }
   if(CARD_MODE){ root.innerHTML=viewCardLogin(); return; }   // เปิดจากลิงก์ลูกค้า → หน้ากรอกเบอร์
@@ -721,7 +745,7 @@ function render(){
 }
 function chrome(inner){
   const who = CUSTOMER
-    ? `<span class="who">👤 ${maskName(CUSTOMER.name)}</span>`
+    ? `<span class="who">👤 ${CUSTOMER.name}</span>`
     : SESSION.role==="admin"
       ? `<span class="who">🛡 ${t('txt.loginAdmin')}</span>`
       : `<span class="who"><span class="dot" style="background:${propColor(SESSION.property)}"></span> ${propName(SESSION.property)}</span>`;
@@ -822,7 +846,7 @@ async function customerLogin(){
   const phone=$("#custPhone").value.trim();
   let m;
   if(DB.online){
-    m=await DB.memberByPhone(phone);           // safe RPC: masked name, no spend
+    m=await DB.memberByPhone(phone);           // member RPC: full registered name, no spend
     if(m){ const tx=await DB.memberTx(phone); TX=TX.filter(x=>x.memberId!==m.id).concat(tx); }
   }else{
     m=findMemberByPhone(phone);
@@ -836,7 +860,7 @@ function viewAdmin(){
   const secCount=APPROVALS.length+ALERTS.filter(a=>!a.resolved).length;
   const lateCount=propsNotUpdatedToday().length;
   const nav=Object.keys(I18N[LANG].nav).map(v=>{
-    const ic={dashboard:"▤",members:"👤",activities:"🎪",promo:"📣",rules:"⚙",rewards:"🎁",referral:"🤝",feedback:"★",security:"🛡",export:"⬇",channels:"🔗",sync:"🔄"}[v];
+    const ic={dashboard:"▤",members:"👤",tiers:"◆",activities:"🎪",promo:"📣",rules:"⚙",rewards:"🎁",referral:"🤝",feedback:"★",security:"🛡",export:"⬇",channels:"🔗",sync:"🔄"}[v];
     const badge=(v==='security'&&secCount)?`<span class="pill red" style="margin-left:auto;padding:1px 8px">${secCount}</span>`
       :(v==='sync'&&lateCount)?`<span class="pill red" style="margin-left:auto;padding:1px 8px">${lateCount}</span>`:'';
     return `<button data-av="${v}" class="${ADMIN_VIEW===v?'active':''}"><span class="ic">${ic}</span>${t('nav.'+v)}${badge}</button>`;
@@ -844,6 +868,7 @@ function viewAdmin(){
   let body="";
   if(ADMIN_VIEW==="dashboard") body=adminDashboard();
   if(ADMIN_VIEW==="members")   body=adminMembers();
+  if(ADMIN_VIEW==="tiers")     body=adminTiers();
   if(ADMIN_VIEW==="activities")body=adminActivities();
   if(ADMIN_VIEW==="promo")     body=adminPromo();
   if(ADMIN_VIEW==="rules")     body=adminRules();
@@ -917,6 +942,58 @@ function adminMembers(){
 }
 
 /* ----- Promo / SMS campaign ----- */
+/* ----- Member tier management (HQ only) ----- */
+function adminTiers(){
+  const th=LANG==='th';
+  const meta={silver:{name:'Silver',cls:''},gold:{name:'Gold',cls:'gold-level'},platinum:{name:'Platinum',cls:'platinum-level'}};
+  const ruleCards=TIER_KEYS.map(k=>{
+    const own=PERKS.filter(p=>p.tier===k).map(p=>p[LANG]||p.th).join('\n');
+    return `<div class="card tier-rule ${meta[k].cls}"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><h3>${meta[k].name}</h3>${tierPill(k)}</div>
+      <label class="fld"><span class="lb">${th?'เริ่มที่แต้ม':'Starts at points'}</span><input id="tier_pts_${k}" type="number" min="0" value="${TIER_RULES[k]}" ${k==='silver'?'disabled':''}></label>
+      <label class="fld" style="margin-bottom:0"><span class="lb">${th?'สิทธิพิเศษของระดับนี้ (1 บรรทัด / 1 สิทธิ์)':'Perks at this tier (one per line)'}</span><textarea id="tier_perks_${k}" rows="4" placeholder="${th?'เพิ่มสิทธิพิเศษ…':'Add perks…'}">${own}</textarea></label>
+    </div>`;
+  }).join('');
+  const rows=MEMBERS.slice().sort((a,b)=>tierRank[b.tier]-tierRank[a.tier]||b.points-a.points).map(m=>{
+    const mode=m.tierMode==='manual';
+    return `<tr><td><strong>${m.name}</strong><div class="muted" style="font-size:11.5px">${m.phone}</div></td><td class="num" style="font-weight:800">${fmt(m.points)}</td><td>${tierPill(m.tier)}</td><td><span class="pill ${mode?'blue':'gray'}">${mode?(th?'แอดมินกำหนด':'Admin set'):(th?'อัตโนมัติจาก Point':'Automatic')}</span></td><td style="text-align:right"><button class="btn ghost sm" onclick="openTierOverride(${m.id})">${th?'ปรับระดับ':'Change tier'}</button></td></tr>`;
+  }).join('');
+  return `<div class="section-title"><div><h2>◆ ${t('nav.tiers')}</h2><div class="muted" style="font-size:13px">${th?'ตั้งเกณฑ์เลื่อนระดับอัตโนมัติ จัดสิทธิพิเศษ และกำหนด VIP รายบุคคล':'Set automatic thresholds, perks, and individual VIP tiers'}</div></div><button class="btn primary" onclick="saveTierSettings()">${t('common.save')}</button></div>
+    <div class="hint" style="margin-bottom:14px">✨ ${th?'สมาชิกจะเลื่อนระดับตาม Point อัตโนมัติ หากแอดมินกำหนดเอง ระบบจะคงระดับนั้นไว้จนกว่าจะเปลี่ยนกลับเป็น “อัตโนมัติ”':'Members move tiers automatically by points. An admin-set tier stays until changed back to Automatic.'}</div>
+    <div class="tier-admin-grid">${ruleCards}</div>
+    <div class="card" style="margin-top:16px"><div class="card-h"><h3>${th?'ระดับของสมาชิกรายบุคคล':'Individual member tiers'}</h3><span class="muted" style="font-size:12px">${fmt(MEMBERS.length)} ${th?'ราย':'members'}</span></div>
+      <table><thead><tr><th>${t('common.member')}</th><th class="num">Point</th><th>${t('common.tier')}</th><th>${th?'วิธีกำหนด':'Source'}</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+function saveTierSettings(){
+  const th=LANG==='th';
+  const gold=Math.max(1,parseInt($("#tier_pts_gold").value)||0);
+  const platinum=Math.max(gold+1,parseInt($("#tier_pts_platinum").value)||0);
+  TIER_RULES={silver:0,gold,platinum};
+  const next=[];
+  TIER_KEYS.forEach(k=>{
+    const el=$("#tier_perks_"+k), old=PERKS.filter(p=>p.tier===k);
+    (el?el.value:'').split(/\n+/).map(s=>s.trim()).filter(Boolean).forEach((s,i)=>next.push({th:th?s:(old[i]?.th||s),en:th?(old[i]?.en||s):s,tier:k}));
+  });
+  PERKS=next; syncMemberTiers(); MEMBERS.forEach(m=>DB.save('members',m));
+  toast(th?'บันทึกเกณฑ์ระดับและสิทธิพิเศษแล้ว ✓':'Tier rules and perks saved ✓'); rerenderAdmin();
+}
+function openTierOverride(id){
+  const th=LANG==='th',m=memberById(id); if(!m)return;
+  const current=m.tierMode==='manual'?m.manualTier:'auto';
+  modal(`<div class="m-h"><h3>${th?'ปรับระดับสมาชิก':'Change member tier'}</h3><button class="x" onclick="closeModal()">✕</button></div><div class="m-b">
+    <div class="card pad" style="margin-bottom:14px"><strong>${m.name}</strong><div class="muted" style="font-size:12px">${fmt(m.points)} Point · ${th?'ระดับปัจจุบัน':'Current'} ${tierPill(m.tier)}</div></div>
+    <label class="fld"><span class="lb">${th?'วิธีกำหนดระดับ':'Tier setting'}</span><select id="tier_override"><option value="auto" ${current==='auto'?'selected':''}>${th?'อัตโนมัติจาก Point':'Automatic by points'} (${cardTier(autoTierForPoints(m.points))})</option>${TIER_KEYS.map(k=>`<option value="${k}" ${current===k?'selected':''}>${th?'แอดมินกำหนด':'Admin set'} — ${cardTier(k)}</option>`).join('')}</select></label>
+    <label class="fld"><span class="lb">${th?'หมายเหตุ':'Note'}</span><input id="tier_reason" placeholder="${th?'เช่น VIP / คนรู้จักเจ้าของกิจการ':'e.g. VIP / owner acquaintance'}"></label>
+    <div class="hint">${th?'เลือก Platinum เพื่อให้สิทธิ์ระดับสูงสุดทันที โดยไม่ต้องรอ Point ถึงเกณฑ์':'Choose Platinum to grant top-tier benefits immediately, regardless of points.'}</div></div>
+    <div class="m-f"><button class="btn primary" onclick="saveTierOverride(${id})">${t('common.save')}</button><button class="btn ghost" onclick="closeModal()">${t('common.cancel')}</button></div>`);
+}
+function saveTierOverride(id){
+  const th=LANG==='th',m=memberById(id),v=$("#tier_override").value,reason=$("#tier_reason").value.trim(); if(!m)return;
+  if(v==='auto'){m.tierMode='auto';m.manualTier='';}else{m.tierMode='manual';m.manualTier=v;}
+  syncMemberTier(m); DB.save('members',m);
+  AUDIT.push({id:NEXT_AUDIT_ID++,ts:nowStamp(),actor:'HQ Admin',role:'admin',action:'tier_change',memberId:id,amount:0,reason:reason||((v==='auto'?'Auto':'Manual')+' '+m.tier),status:'done',risk:'low'});
+  toast(th?'อัปเดตระดับสมาชิกแล้ว ✓':'Member tier updated ✓'); closeModal(); rerenderAdmin();
+}
+
 let PROMO_F={tier:"all",branch:"all",lang:"all"};
 function promoRecipients(){
   const stayedAt=mid=>new Set(TX.filter(x=>x.memberId===mid&&x.type==='stay').map(x=>x.branch));
@@ -1766,22 +1843,18 @@ function viewCustomerPortal(){
       <div style="font-size:11.5px;opacity:.85;font-weight:700">👑 ${ct('exclusiveInvite')}</div>
       <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:6px"><div><b>${L3(nextAct.title)}</b><div style="font-size:12px;opacity:.85">📅 ${nextAct.date} · ${nextAct.time}</div></div><button class="btn gold sm" onclick="gotoTab('act')">${ct('seeAll')}</button></div>
     </div>`:'';
-  const bWelcome=PROPERTIES.find(x=>x.id===CARD_BRANCH)?`<div style="display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;background:rgba(255,255,255,.18);padding:4px 10px;border-radius:999px;margin-bottom:10px">📍 ${ct('welcome')} ${cardProp(CARD_BRANCH)}</div><br>`:'';
   return `<div class="device"><div class="status"></div><div style="padding:16px">
-    <div class="mcard">
+    <div class="mcard tier-${m.tier}">
       <div class="tier">${cardTier(m.tier)}</div>
-      ${bWelcome}
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
-        ${avatarBox(m,52,'border:2px solid rgba(255,255,255,.65)')}
+      <div style="font-size:11px;font-weight:800;letter-spacing:.8px;opacity:.72;margin-bottom:10px">PLAAI MEMBER</div>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:11px">
+        ${avatarBox(m,44,'border:2px solid rgba(255,255,255,.72)')}
         <div style="min-width:0">
-          <div style="font-size:13px;font-weight:700">${ct('hi')}, ${maskName(m.name)}</div>
-          <div style="font-size:11.5px;opacity:.75">${ct('member')} · ${m.phone}</div>
-          ${m.photo?'':`<div style="margin-top:5px;display:flex;gap:5px;align-items:center;flex-wrap:wrap"><span style="font-size:10.5px;opacity:.85">${ct('addPhoto')}</span>${['line','wechat','whatsapp'].map(pf=>`<button onclick="custSetPhoto('${pf}')" style="border:0;border-radius:6px;padding:2px 7px;font-size:12px;font-weight:800;background:rgba(255,255,255,.92);color:${PLATFORM_META[pf].color};cursor:pointer">${PLATFORM_META[pf].ic}</button>`).join('')}<label style="border:0;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:800;background:rgba(255,255,255,.92);color:var(--brand);cursor:pointer">📷<input type="file" accept="image/*" style="display:none" onchange="custUploadPhoto(event)"></label></div>`}
+          <div style="font-size:14px;font-weight:800;line-height:1.3;white-space:normal">${m.name}</div>
+          <div style="font-size:10.5px;opacity:.7;margin-top:2px">${ct('member')} · ${m.refCode}</div>
         </div>
       </div>
-      <div style="font-size:12px;opacity:.85">${ct('yourPoints')}</div>
-      <div class="pts-big">${fmt(m.points)} <span style="font-size:16px">${ct('pts')}</span></div>
-      <div style="font-size:11.5px;opacity:.8;margin-top:6px">${ct('worth')} ≈ ฿${fmt(worth)}</div>
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;position:relative;z-index:1"><div><div style="font-size:10.5px;opacity:.72">${ct('yourPoints')}</div><div class="pts-big">${fmt(m.points)} <span style="font-size:13px">${ct('pts')}</span></div></div><div style="font-size:10.5px;font-weight:700;opacity:.66">Plaai Point</div></div>
     </div>
     ${expBlock}
     ${actTeaser}
@@ -1918,7 +1991,7 @@ function openAddMember(){
   const opts=PROPERTIES.map(p=>`<option value="${p.id}">${p.name[LANG]}</option>`).join("");
   modal(`<div class="m-h"><h3>${t('txt.addMember')}</h3><button class="x" onclick="closeModal()">✕</button></div><div class="m-b"><label class="fld"><span class="lb">${t('common.phone')}</span><input id="nm_phone" placeholder="+66 / +86 …"></label><label class="fld"><span class="lb">${t('common.name')}</span><input id="nm_name"></label><label class="fld"><span class="lb">${t('common.branch')}</span><select id="nm_branch">${opts}</select></label></div><div class="m-f"><button class="btn primary" onclick="addMember()">${t('common.save')}</button><button class="btn ghost" onclick="closeModal()">${t('common.cancel')}</button></div>`);
 }
-function addMember(){ const phone=$("#nm_phone").value.trim(),name=$("#nm_name").value.trim(); if(!phone||!name){toast(LANG==='th'?'กรอกข้อมูลให้ครบ':'Fill all fields');return;} const m={id:NEXT_MEMBER_ID++,phone,name,tier:"silver",points:0,spend:0,joined:today(),home:$("#nm_branch").value,refCode:"PLAAI-"+Math.floor(1000+Math.random()*9000),photo:""}; MEMBERS.push(m); DB.save('members',m); toast(LANG==='th'?'เพิ่มสมาชิกแล้ว ✓':'Member added ✓'); closeModal(); rerenderAdmin(); }
+function addMember(){ const phone=$("#nm_phone").value.trim(),name=$("#nm_name").value.trim(); if(!phone||!name){toast(LANG==='th'?'กรอกข้อมูลให้ครบ':'Fill all fields');return;} const m={id:NEXT_MEMBER_ID++,phone,name,tier:"silver",tierMode:"auto",manualTier:"",points:0,spend:0,joined:today(),home:$("#nm_branch").value,refCode:"PLAAI-"+Math.floor(1000+Math.random()*9000),photo:""}; MEMBERS.push(m); DB.save('members',m); toast(LANG==='th'?'เพิ่มสมาชิกแล้ว ✓':'Member added ✓'); closeModal(); rerenderAdmin(); }
 
 /* ----- Bulk CSV import (onboard existing members, unlimited) ----- */
 function openImport(){
@@ -1959,9 +2032,10 @@ function importMembers(){
     const phone=c[0]||''; if(!phone||!/\d/.test(phone)||/phone|เบอร์/i.test(phone)){ skipped++; return; } // skip header/blank
     if(findMemberByPhone(phone)){ skipped++; return; } // no duplicates
     const name=c[1]||(th?'สมาชิกใหม่':'New member');
-    const tier=validTiers.includes((c[2]||'').toLowerCase())?c[2].toLowerCase():'silver';
+    const hasManualTier=validTiers.includes((c[2]||'').toLowerCase());
+    const tier=hasManualTier?c[2].toLowerCase():'silver';
     const home=propIds.includes(c[3])?c[3]:PROPERTIES[0].id;
-    MEMBERS.push({id:NEXT_MEMBER_ID++,phone,name,tier,points:0,spend:0,joined:today(),home,refCode:"PLAAI-"+Math.floor(1000+Math.random()*9000),photo:""});
+    MEMBERS.push({id:NEXT_MEMBER_ID++,phone,name,tier,tierMode:hasManualTier?'manual':'auto',manualTier:hasManualTier?tier:'',points:0,spend:0,joined:today(),home,refCode:"PLAAI-"+Math.floor(1000+Math.random()*9000),photo:""});
     added++;
   });
   toast(th?`นำเข้า ${added} รายชื่อ ✓ (ข้าม ${skipped})`:`Imported ${added} ✓ (skipped ${skipped})`);
