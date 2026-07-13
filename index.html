@@ -236,8 +236,9 @@ const DB = {
 /* ====================== i18n ======================= */
 const I18N = {
   th:{
-    roles:{admin:"หลังบ้าน (Admin)",member:"หน้าสมาชิก",staff:"เคาน์เตอร์",survey:"แบบประเมิน"},
-    nav:{dashboard:"ภาพรวม",members:"สมาชิก",tiers:"ระดับสมาชิก",activities:"ประชาสัมพันธ์",promo:"ส่งโปรโมชั่น",rules:"กฎ & แต้มหมดอายุ",rewards:"ของรางวัล",referral:"แนะนำเพื่อน",feedback:"ผลประเมิน",security:"ความปลอดภัย",export:"ส่งออกข้อมูล",channels:"เชื่อมต่อช่องทาง",sync:"นำเข้าข้อมูลอัตโนมัติ"},
+    roles:{admin:"หลังบ้าน (Admin)",member:"หน้าสมาชิก",staff:"เคาน์เตอร์",partner:"Plaai Partner",survey:"แบบประเมิน"},
+    nav:{dashboard:"ภาพรวม",members:"สมาชิก",tiers:"ระดับสมาชิก",partners:"พาร์ตเนอร์ & เคลียร์บิล",activities:"ประชาสัมพันธ์",promo:"ส่งโปรโมชั่น",rules:"กฎ & แต้มหมดอายุ",rewards:"ของรางวัล",referral:"แนะนำเพื่อน",feedback:"ผลประเมิน",security:"ความปลอดภัย",export:"ส่งออกข้อมูล",channels:"เชื่อมต่อช่องทาง",sync:"นำเข้าข้อมูลอัตโนมัติ"},
+    pnav:{redeem:"รับชำระด้วยแต้ม",history:"รายการใช้สิทธิ์",billing:"ยอดเคลียร์บิล"},
     snav:{desk:"เช็กอิน/เช็กเอาต์",lookup:"ค้นหาลูกค้า",reviews:"รีวิวตึกนี้",sync:"อัปเดตข้อมูลวันนี้"},
     kpi:{members:"สมาชิกทั้งหมด",points:"แต้มหมุนเวียน",revenue:"ยอดขายสะสม",avgrating:"คะแนนเฉลี่ย",referrals:"แนะนำสำเร็จ",responses:"แบบประเมินตอบกลับ"},
     common:{search:"ค้นหา…",all:"ทุกสาขา",save:"บันทึก",cancel:"ยกเลิก",close:"ปิด",confirm:"ยืนยัน",delete:"ลบ",
@@ -316,8 +317,9 @@ const I18N = {
     }
   },
   en:{
-    roles:{admin:"Admin",member:"Member",staff:"Front Desk",survey:"Survey"},
-    nav:{dashboard:"Overview",members:"Members",tiers:"Member tiers",activities:"Activities & PR",promo:"Send Promo",rules:"Rules & Expiry",rewards:"Rewards",referral:"Referrals",feedback:"Feedback",security:"Security",export:"Export",channels:"Channels",sync:"Auto Data Import"},
+    roles:{admin:"Admin",member:"Member",staff:"Front Desk",partner:"Plaai Partner",survey:"Survey"},
+    nav:{dashboard:"Overview",members:"Members",tiers:"Member tiers",partners:"Partners & settlement",activities:"Activities & PR",promo:"Send Promo",rules:"Rules & Expiry",rewards:"Rewards",referral:"Referrals",feedback:"Feedback",security:"Security",export:"Export",channels:"Channels",sync:"Auto Data Import"},
+    pnav:{redeem:"Accept points",history:"Redemption history",billing:"Settlement"},
     snav:{desk:"Check-in/out",lookup:"Find customer",reviews:"This property's reviews",sync:"Today's Update"},
     kpi:{members:"Total Members",points:"Points in Circulation",revenue:"Cumulative Revenue",avgrating:"Avg Rating",referrals:"Successful Referrals",responses:"Survey Responses"},
     common:{search:"Search…",all:"All branches",save:"Save",cancel:"Cancel",close:"Close",confirm:"Confirm",delete:"Delete",
@@ -399,13 +401,28 @@ const propName = id => (PROPERTIES.find(p=>p.id===id)||{name:{th:"-",en:"-"}}).n
 const propColor = id => (PROPERTIES.find(p=>p.id===id)||{color:"#888"}).color;
 const propBilling = id => (PROPERTIES.find(p=>p.id===id)||{}).billing || "nightly";
 
+/* ====================== Plaai Partner network ======================= */
+let PARTNERS=[
+  {id:"carcare",name:{th:"Rayong Auto Care",en:"Rayong Auto Care"},category:{th:"ล้างรถ",en:"Car care"},color:"#b83232",rate:80,status:"active",user:"partner_carcare"},
+  {id:"wellness",name:{th:"Siam Wellness ระยอง",en:"Siam Wellness Rayong"},category:{th:"นวด & สุขภาพ",en:"Massage & wellness"},color:"#7b61a8",rate:85,status:"active",user:"partner_wellness"},
+  {id:"transfer",name:{th:"Rayong Airport Transfer",en:"Rayong Airport Transfer"},category:{th:"รถรับส่ง",en:"Airport transfer"},color:"#d39825",rate:90,status:"active",user:"partner_transfer"},
+];
+const partnerById=id=>PARTNERS.find(p=>p.id===id);
+const partnerName=id=>{const p=partnerById(id);return p?(p.name[LANG]||p.name.th):'-';};
+let PARTNER_CLAIMS=[
+  {id:1,ref:"PP-260710-001",partnerId:"wellness",memberId:2,rewardId:4,points:150,faceValue:300,plaaiPay:255,date:"2026-07-10",time:"15:42",status:"approved",otpVerified:true},
+];
+let NEXT_PARTNER_CLAIM_ID=2;
+let PARTNER_OTP=null;
+
 // 1 staff account per property + 1 HQ admin
 /* Default passwords (DEMO). In production these live in Supabase Auth, not in this file.
    Only the HQ admin can change them (Rules & Settings → User accounts & passwords). */
-const DEFAULT_PASS = { hq:"Plaai@HQ2026", prime:"Prime@2026", plus_ry:"PlusRayong@2026", play:"Play@2026", bowin1:"Bowin1@2026", bowin2:"Bowin2Central@2026", kunchorn:"Kunchorn@2026" };
+const DEFAULT_PASS = { hq:"Plaai@HQ2026", prime:"Prime@2026", plus_ry:"PlusRayong@2026", play:"Play@2026", bowin1:"Bowin1@2026", bowin2:"Bowin2Central@2026", kunchorn:"Kunchorn@2026", partner_carcare:"Partner@2026", partner_wellness:"Partner@2026", partner_transfer:"Partner@2026" };
 let ACCOUNTS = [
   {user:"hq", role:"admin", name:{th:"แอดมินกลาง (สำนักงานใหญ่)",en:"HQ Admin"}, color:"#2a3d54", pass:DEFAULT_PASS.hq},
-  ...PROPERTIES.map(p=>({user:p.id, role:"staff", property:p.id, name:{th:"พนักงาน "+p.name.th,en:"Staff "+p.name.en}, color:p.color, pass:(DEFAULT_PASS[p.id]||(p.id.charAt(0).toUpperCase()+p.id.slice(1)+"@2026"))}))
+  ...PROPERTIES.map(p=>({user:p.id, role:"staff", property:p.id, name:{th:"พนักงาน "+p.name.th,en:"Staff "+p.name.en}, color:p.color, pass:(DEFAULT_PASS[p.id]||(p.id.charAt(0).toUpperCase()+p.id.slice(1)+"@2026"))})),
+  ...PARTNERS.map(p=>({user:p.user,role:"partner",partnerId:p.id,name:{th:"ร้าน "+p.name.th,en:p.name.en},color:p.color,pass:DEFAULT_PASS[p.user]}))
 ];
 
 /* ====================== Config ======================= */
@@ -461,9 +478,9 @@ function ph(label,color){ return "data:image/svg+xml;utf8,"+encodeURIComponent(`
 let REWARDS=[
   {id:1,name:{th:"ส่วนลดค่าอาหาร 100 บาท",en:"฿100 food voucher"},cost:100,cat:"cash",active:true,imgs:[ph("🍜","#3d5675")]},
   {id:2,name:{th:"คูปองเงินสด 200 บาท",en:"฿200 cash coupon"},cost:200,cat:"cash",active:true,imgs:[ph("💵","#2f9e6f")]},
-  {id:3,name:{th:"ล้างรถฟรี (ร้านใกล้นิคมฯ)",en:"Free car wash"},cost:120,cat:"partner",active:true,imgs:[ph("🚗","#b83232")]},
-  {id:4,name:{th:"นวดแผนไทย 30 นาที",en:"Thai massage 30 min"},cost:150,cat:"partner",active:true,imgs:[ph("💆","#9575cd")]},
-  {id:5,name:{th:"รถรับส่งสนามบิน (Expat)",en:"Airport transfer"},cost:300,cat:"partner",active:true,imgs:[ph("✈️","#e0a92b")]},
+  {id:3,name:{th:"ล้างรถฟรี",en:"Free car wash"},cost:120,value:250,cat:"partner",partnerId:"carcare",active:true,imgs:[ph("🚗","#b83232")]},
+  {id:4,name:{th:"นวดแผนไทย 30 นาที",en:"Thai massage 30 min"},cost:150,value:300,cat:"partner",partnerId:"wellness",active:true,imgs:[ph("💆","#9575cd")]},
+  {id:5,name:{th:"รถรับส่งสนามบิน",en:"Airport transfer"},cost:300,value:600,cat:"partner",partnerId:"transfer",active:true,imgs:[ph("✈️","#e0a92b")]},
 ];
 let NEXT_REWARD_ID=6;
 let PERKS=[
@@ -623,6 +640,7 @@ let SESSION=null;            // {role:'admin'|'staff', property?, name}
 let CUSTOMER=null;          // member object when in customer portal
 let ADMIN_VIEW="dashboard";
 let STAFF_VIEW="desk";
+let PARTNER_VIEW="redeem";
 let DESK_MODE="rent";   // for monthly properties: 'rent' | 'once'
 let SURVEY_STATE={branch:"bowin1", memberId:2, clean:0, checkin:0, wifi:0, done:false};
 
@@ -761,7 +779,7 @@ function compressImageFile(file, kind){
   });
 }
 const imgErrMsg = ()=> LANG==='th'?'ไฟล์รูปไม่ถูกต้อง':'Invalid image file';
-function rerenderApp(){ if(SESSION&&SESSION.role==='admin')rerenderAdmin(); else if(SESSION&&SESSION.role==='staff')rerenderStaff(); }
+function rerenderApp(){ if(SESSION&&SESSION.role==='admin')rerenderAdmin(); else if(SESSION&&SESSION.role==='staff')rerenderStaff(); else if(SESSION&&SESSION.role==='partner')rerenderPartner(); }
 function findMemberByPhone(p){ const d=digits(p); return MEMBERS.find(m=>digits(m.phone)===d||digits(m.phone).endsWith(d.slice(-8))); }
 
 /* ====================== ROOT router ======================= */
@@ -771,9 +789,10 @@ function render(){
   if(CUSTOMER){ root.innerHTML=customerShell(viewCustomerPortal()); return; }
   if(CARD_MODE){ root.innerHTML=viewCardLogin(); return; }   // เปิดจากลิงก์ลูกค้า → หน้ากรอกเบอร์
   if(!SESSION){ root.innerHTML=viewLogin(); bindLogin(); return; }
-  // staff or admin
+  // HQ admin, property staff, or Plaai Partner
   let body="";
   if(SESSION.role==="admin") body=viewAdmin();
+  else if(SESSION.role==="partner")body=viewPartnerApp();
   else body=viewStaffApp();
   root.innerHTML=chrome(body);
   bindChrome(); bindDynamic();
@@ -783,7 +802,9 @@ function chrome(inner){
     ? `<span class="who">👤 ${CUSTOMER.name}</span>`
     : SESSION.role==="admin"
       ? `<span class="who">🛡 ${t('txt.loginAdmin')}</span>`
-      : `<span class="who"><span class="dot" style="background:${propColor(SESSION.property)}"></span> ${propName(SESSION.property)}</span>`;
+      : SESSION.role==="partner"
+        ? `<span class="who">🤝 ${partnerName(SESSION.partnerId)}</span>`
+        : `<span class="who"><span class="dot" style="background:${propColor(SESSION.property)}"></span> ${propName(SESSION.property)}</span>`;
   return `<div class="topbar">
       <div class="logo"><span class="mark">พ</span><span>Plaai <span style="opacity:.8;font-weight:600">Point</span></span></div>
       ${who}
@@ -796,7 +817,7 @@ function chrome(inner){
     </div>
     <div class="wrap">${inner}</div>`;
 }
-function logout(){ if(DB.online){ try{ DB.client.auth.signOut(); }catch(e){} } SESSION=null; CUSTOMER=null; ADMIN_VIEW="dashboard"; STAFF_VIEW="desk"; render(); }
+function logout(){ if(DB.online){ try{ DB.client.auth.signOut(); }catch(e){} } SESSION=null; CUSTOMER=null; ADMIN_VIEW="dashboard"; STAFF_VIEW="desk"; PARTNER_VIEW="redeem"; render(); }
 
 /* ====================== LOGIN ======================= */
 function viewLogin(){
@@ -867,15 +888,15 @@ async function doLogin(){
     /* DEMO MODE only — checks the sample passwords in this file */
     const a=ACCOUNTS.find(x=>x.user.toLowerCase()===u);
     if(!a||a.pass!==p){ toast(th?'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง':'Incorrect username or password'); return; }
-    SESSION={role:a.role, property:a.property, name:a.name};
+    SESSION={role:a.role, property:a.property, partnerId:a.partnerId, name:a.name};
   }
-  if(SESSION.role==="staff")STAFF_VIEW="desk"; else ADMIN_VIEW="dashboard";
+  if(SESSION.role==="staff")STAFF_VIEW="desk"; else if(SESSION.role==="partner")PARTNER_VIEW="redeem"; else ADMIN_VIEW="dashboard";
   render();
 }
 function loginAs(user){ // internal shortcut (no UI) — real sign-in uses doLogin()
   const a=ACCOUNTS.find(x=>x.user===user); if(!a)return;
-  SESSION={role:a.role, property:a.property, name:a.name};
-  if(a.role==="staff")STAFF_VIEW="desk"; else ADMIN_VIEW="dashboard";
+  SESSION={role:a.role, property:a.property, partnerId:a.partnerId, name:a.name};
+  if(a.role==="staff")STAFF_VIEW="desk"; else if(a.role==="partner")PARTNER_VIEW="redeem"; else ADMIN_VIEW="dashboard";
   render();
 }
 async function customerLogin(){
@@ -898,10 +919,12 @@ async function customerLogin(){
 /* ====================== ADMIN ======================= */
 function viewAdmin(){
   const secCount=APPROVALS.length+ALERTS.filter(a=>!a.resolved).length;
+  const partnerCount=PARTNER_CLAIMS.filter(c=>c.status==='pending').length;
   const lateCount=propsNotUpdatedToday().length;
   const nav=Object.keys(I18N[LANG].nav).map(v=>{
-    const ic={dashboard:"▤",members:"👤",tiers:"◆",activities:"🎪",promo:"📣",rules:"⚙",rewards:"🎁",referral:"🤝",feedback:"★",security:"🛡",export:"⬇",channels:"🔗",sync:"🔄"}[v];
+    const ic={dashboard:"▤",members:"👤",tiers:"◆",partners:"🤝",activities:"🎪",promo:"📣",rules:"⚙",rewards:"🎁",referral:"↗",feedback:"★",security:"🛡",export:"⬇",channels:"🔗",sync:"🔄"}[v];
     const badge=(v==='security'&&secCount)?`<span class="pill red" style="margin-left:auto;padding:1px 8px">${secCount}</span>`
+      :(v==='partners'&&partnerCount)?`<span class="pill gold" style="margin-left:auto;padding:1px 8px">${partnerCount}</span>`
       :(v==='sync'&&lateCount)?`<span class="pill red" style="margin-left:auto;padding:1px 8px">${lateCount}</span>`:'';
     return `<button data-av="${v}" class="${ADMIN_VIEW===v?'active':''}"><span class="ic">${ic}</span>${t('nav.'+v)}${badge}</button>`;
   }).join("");
@@ -909,6 +932,7 @@ function viewAdmin(){
   if(ADMIN_VIEW==="dashboard") body=adminDashboard();
   if(ADMIN_VIEW==="members")   body=adminMembers();
   if(ADMIN_VIEW==="tiers")     body=adminTiers();
+  if(ADMIN_VIEW==="partners")  body=adminPartners();
   if(ADMIN_VIEW==="activities")body=adminActivities();
   if(ADMIN_VIEW==="promo")     body=adminPromo();
   if(ADMIN_VIEW==="rules")     body=adminRules();
@@ -1095,7 +1119,7 @@ function adminRules(){
       <table><thead><tr><th>${LANG==='th'?'ชื่อ':'Name'}</th><th>${LANG==='th'?'การคิดเงิน':'Billing'}</th><th></th></tr></thead><tbody>${PROPERTIES.map(p=>`<tr><td><span class="prop-chip"><span class="dot" style="background:${p.color}"></span>${p.name[LANG]}</span></td><td>${p.billing==='monthly'?`<span class="pill green">🏠 ${LANG==='th'?'รายเดือน':'Monthly'}</span>`:`<span class="pill blue">${LANG==='th'?'รายคืน':'Nightly'}</span>`}</td><td style="text-align:right;white-space:nowrap"><button class="btn ghost sm" onclick="openProperty('${p.id}')">${t('common.edit')}</button> <button class="btn danger sm" onclick="deleteProperty('${p.id}')">${t('common.delete')}</button></td></tr>`).join("")}</tbody></table></div>
     <div class="card" style="margin-bottom:16px"><div class="card-h"><h3>🔑 ${LANG==='th'?'บัญชีผู้ใช้ & รหัสผ่าน':'User accounts & passwords'} <span class="muted" style="font-weight:500;font-size:12px">(${ACCOUNTS.length})</span></h3></div>
       <div class="card-b" style="padding-bottom:0"><div class="hint" style="margin-bottom:6px">🔒 ${LANG==='th'?'หน้านี้เข้าได้เฉพาะแอดมินกลาง และมีแค่แอดมินกลางเท่านั้นที่เปลี่ยนรหัสผ่านของแต่ละบัญชีได้ (พนักงานเปลี่ยนเองไม่ได้)':'Only HQ admin can open this page; only HQ admin can change passwords (staff cannot change their own).'}</div></div>
-      <table><thead><tr><th>${LANG==='th'?'ชื่อผู้ใช้':'Username'}</th><th>${LANG==='th'?'บัญชี':'Account'}</th><th>${LANG==='th'?'บทบาท':'Role'}</th><th></th></tr></thead><tbody>${ACCOUNTS.map(a=>`<tr><td><code class="mono" style="font-size:12px">${a.user}</code></td><td>${a.name[LANG]}</td><td>${a.role==='admin'?`<span class="pill green">${LANG==='th'?'แอดมินกลาง':'HQ Admin'}</span>`:`<span class="pill gray">${LANG==='th'?'พนักงาน':'Staff'}</span>`}</td><td style="text-align:right"><button class="btn ghost sm" onclick="openPassword('${a.user}')">${LANG==='th'?'เปลี่ยนรหัสผ่าน':'Change password'}</button></td></tr>`).join("")}</tbody></table></div>
+      <table><thead><tr><th>${LANG==='th'?'ชื่อผู้ใช้':'Username'}</th><th>${LANG==='th'?'บัญชี':'Account'}</th><th>${LANG==='th'?'บทบาท':'Role'}</th><th></th></tr></thead><tbody>${ACCOUNTS.map(a=>`<tr><td><code class="mono" style="font-size:12px">${a.user}</code></td><td>${a.name[LANG]}</td><td>${a.role==='admin'?`<span class="pill green">${LANG==='th'?'แอดมินกลาง':'HQ Admin'}</span>`:a.role==='partner'?`<span class="pill gold">Plaai Partner</span>`:`<span class="pill gray">${LANG==='th'?'พนักงาน':'Staff'}</span>`}</td><td style="text-align:right"><button class="btn ghost sm" onclick="openPassword('${a.user}')">${LANG==='th'?'เปลี่ยนรหัสผ่าน':'Change password'}</button></td></tr>`).join("")}</tbody></table></div>
     <div class="grid cols-2">
       <div class="card"><div class="card-h"><h3>${t('txt.earnRate')}</h3></div><div class="card-b">
         ${f('bahtPerPoint',t('txt.earnRate'),t('txt.earnRateDesc'),t('common.baht')+" = 1 "+t('common.points'))}
@@ -1214,6 +1238,53 @@ function adminRewards(){
 }
 function toggleReward(id){const r=REWARDS.find(x=>x.id===id);r.active=!r.active;DB.save('rewards',r);rerenderAdmin();}
 function deleteReward(id){REWARDS=REWARDS.filter(x=>x.id!==id);toast(LANG==='th'?'ลบแล้ว':'Deleted');rerenderAdmin();}
+
+/* ----- Plaai Partner & settlement (HQ) ----- */
+function claimStatusPill(status){
+  const th=LANG==='th',m={pending:['gold',th?'รอตรวจสอบ':'Pending'],approved:['blue',th?'อนุมัติแล้ว':'Approved'],paid:['green',th?'ชำระแล้ว':'Paid'],reversed:['red',th?'ยกเลิก/คืนแต้ม':'Reversed']}[status]||['gray',status];
+  return `<span class="pill ${m[0]}">${m[1]}</span>`;
+}
+function adminPartners(){
+  const th=LANG==='th',pending=PARTNER_CLAIMS.filter(c=>c.status==='pending'),approved=PARTNER_CLAIMS.filter(c=>c.status==='approved');
+  const pendingAmt=pending.reduce((s,c)=>s+c.plaaiPay,0),approvedAmt=approved.reduce((s,c)=>s+c.plaaiPay,0);
+  const kpis=`<div class="grid cols-4">
+    <div class="card kpi"><div class="ic">🤝</div><div class="label">${th?'ร้านที่ใช้งาน':'Active partners'}</div><div class="val">${PARTNERS.filter(p=>p.status==='active').length}</div></div>
+    <div class="card kpi"><div class="ic">⏳</div><div class="label">${th?'รอตรวจสอบ':'Pending claims'}</div><div class="val">${pending.length}</div><div class="sub">฿${fmt(pendingAmt)}</div></div>
+    <div class="card kpi"><div class="ic">✓</div><div class="label">${th?'รอชำระ':'Approved to pay'}</div><div class="val">${approved.length}</div><div class="sub">฿${fmt(approvedAmt)}</div></div>
+    <div class="card kpi"><div class="ic">฿</div><div class="label">${th?'ชำระสะสม':'Total paid'}</div><div class="val">฿${fmt(PARTNER_CLAIMS.filter(c=>c.status==='paid').reduce((s,c)=>s+c.plaaiPay,0))}</div></div>
+  </div>`;
+  const partnerRows=PARTNERS.map(p=>{const count=PARTNER_CLAIMS.filter(c=>c.partnerId===p.id&&c.status!=='reversed').length;return `<tr><td><span class="dot" style="background:${p.color}"></span> <strong>${p.name[LANG]||p.name.th}</strong><div class="muted" style="font-size:11.5px">${p.category[LANG]||p.category.th}</div></td><td><code class="mono" style="font-size:11px">${p.user}</code></td><td class="num">${p.rate}%</td><td class="num">${count}</td><td>${p.status==='active'?`<span class="pill green">${th?'ใช้งาน':'Active'}</span>`:`<span class="pill gray">${th?'ระงับ':'Paused'}</span>`}</td><td style="text-align:right"><button class="btn ghost sm" onclick="togglePartner('${p.id}')">${p.status==='active'?(th?'ระงับ':'Pause'):(th?'เปิดใช้งาน':'Activate')}</button></td></tr>`;}).join('');
+  const claimRows=PARTNER_CLAIMS.slice().sort((a,b)=>(b.date+b.time).localeCompare(a.date+a.time)).map(c=>{const m=memberById(c.memberId),r=REWARDS.find(x=>x.id===c.rewardId);let actions='—';if(c.status==='pending')actions=`<button class="btn primary sm" onclick="approvePartnerClaim(${c.id})">✓ ${th?'อนุมัติ':'Approve'}</button> <button class="btn danger sm" onclick="reversePartnerClaim(${c.id})">${th?'ยกเลิก':'Reverse'}</button>`;if(c.status==='approved')actions=`<button class="btn gold sm" onclick="payPartnerClaim(${c.id})">฿ ${th?'ชำระแล้ว':'Mark paid'}</button> <button class="btn danger sm" onclick="reversePartnerClaim(${c.id})">${th?'ยกเลิก':'Reverse'}</button>`;return `<tr><td><code class="mono" style="font-size:11px">${c.ref}</code><div class="muted" style="font-size:11px">${c.date} ${c.time}</div></td><td>${partnerName(c.partnerId)}</td><td>${m?m.name:'-'}</td><td>${r?(r.name[LANG]||r.name.th):'-'}<div class="muted" style="font-size:11px">-${c.points} ${th?'แต้ม':'pts'}</div></td><td class="num">฿${fmt(c.plaaiPay)}</td><td>${claimStatusPill(c.status)}</td><td style="text-align:right;white-space:nowrap">${actions}</td></tr>`;}).join('');
+  return `<div class="section-title"><div><h2>🤝 ${t('nav.partners')}</h2><div class="muted" style="font-size:13px">${th?'ตรวจรายการใช้แต้ม อนุมัติยอด และติดตามการชำระให้ร้านค้า':'Review redemptions, approve claims, and track partner payments'}</div></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn ghost" onclick="downloadPartnerCsv()">⬇ CSV</button><button class="btn primary" onclick="openPartner()">+ ${th?'เพิ่ม Partner':'Add partner'}</button></div></div>
+    ${kpis}
+    <div class="card" style="margin-top:16px"><div class="card-h"><h3>${th?'ร้านค้าในเครือ':'Partner network'}</h3></div><table><thead><tr><th>${th?'ร้านค้า':'Partner'}</th><th>${th?'บัญชี':'Login'}</th><th class="num">${th?'Plaai ชำระ':'Plaai pays'}</th><th class="num">${th?'รายการ':'Claims'}</th><th>${t('common.status')}</th><th></th></tr></thead><tbody>${partnerRows}</tbody></table></div>
+    <div class="card" style="margin-top:16px"><div class="card-h"><h3>${th?'รายการเคลียร์บิล':'Settlement claims'}</h3><span class="muted" style="font-size:12px">${PARTNER_CLAIMS.length} ${th?'รายการ':'claims'}</span></div><table><thead><tr><th>${th?'เลขอ้างอิง':'Reference'}</th><th>Partner</th><th>${t('common.member')}</th><th>${th?'สิทธิ์ที่ใช้':'Reward'}</th><th class="num">${th?'ยอดชำระ':'Payable'}</th><th>${t('common.status')}</th><th></th></tr></thead><tbody>${claimRows||`<tr><td colspan="7" class="empty">—</td></tr>`}</tbody></table></div>`;
+}
+function downloadPartnerCsv(){
+  const esc=v=>{v=String(v??'');return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;};
+  const headers=['Reference','Date','Partner','Member','Phone','Reward','Points','Face Value','Plaai Pay','Status'];
+  const rows=PARTNER_CLAIMS.map(c=>{const m=memberById(c.memberId),r=REWARDS.find(x=>x.id===c.rewardId);return [c.ref,c.date+' '+c.time,partnerName(c.partnerId),m?m.name:'',m?m.phone:'',r?(r.name[LANG]||r.name.th):'',c.points,c.faceValue,c.plaaiPay,c.status];});
+  const csv='﻿'+[headers,...rows].map(r=>r.map(esc).join(',')).join('\n'),blob=new Blob([csv],{type:'text/csv;charset=utf-8'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='plaai_partner_settlement_'+today()+'.csv';a.click();toast(LANG==='th'?'ดาวน์โหลดรายงาน Partner แล้ว':'Partner report downloaded');
+}
+function openPartner(){
+  const th=LANG==='th';
+  modal(`<div class="m-h"><h3>${th?'เพิ่ม Plaai Partner':'Add Plaai Partner'}</h3><button class="x" onclick="closeModal()">✕</button></div><div class="m-b">
+    <label class="fld"><span class="lb">${th?'ชื่อร้านค้า':'Partner name'}</span><input id="pt_name"></label>
+    <label class="fld"><span class="lb">${th?'ประเภทธุรกิจ':'Category'}</span><input id="pt_cat" placeholder="${th?'เช่น ร้านอาหาร / สปา':'e.g. Restaurant / Spa'}"></label>
+    <div class="row"><label class="fld"><span class="lb">${th?'Plaai ชำระให้ร้าน (%)':'Plaai reimbursement (%)'}</span><input id="pt_rate" type="number" min="0" max="100" value="85"></label><label class="fld"><span class="lb">${th?'ชื่อผู้ใช้':'Username'}</span><input id="pt_user" placeholder="partner_shop"></label></div>
+    <div class="hint">${th?'ระบบจะสร้างบัญชี Partner และใช้รหัสเริ่มต้น Partner@2026 — ควรเปลี่ยนรหัสก่อนใช้งานจริง':'A partner login is created with temporary password Partner@2026.'}</div></div>
+    <div class="m-f"><button class="btn primary" onclick="savePartner()">${t('common.save')}</button><button class="btn ghost" onclick="closeModal()">${t('common.cancel')}</button></div>`);
+}
+function savePartner(){
+  const th=LANG==='th',name=$("#pt_name").value.trim(),cat=$("#pt_cat").value.trim(),user=$("#pt_user").value.trim().toLowerCase().replace(/\s+/g,'_'),rate=Math.max(0,Math.min(100,parseInt($("#pt_rate").value)||0));
+  if(!name||!user){toast(th?'กรอกชื่อร้านและชื่อผู้ใช้':'Enter name and username');return;} if(ACCOUNTS.some(a=>a.user===user)){toast(th?'ชื่อผู้ใช้นี้มีแล้ว':'Username already exists');return;}
+  const id='partner_'+Date.now().toString(36),p={id,name:{th:name,en:name},category:{th:cat||'Partner',en:cat||'Partner'},color:'#3d5675',rate,status:'active',user}; PARTNERS.push(p); ACCOUNTS.push({user,role:'partner',partnerId:id,name:{th:'ร้าน '+name,en:name},color:p.color,pass:'Partner@2026'});
+  toast(th?'เพิ่ม Partner แล้ว ✓':'Partner added ✓'); closeModal(); rerenderAdmin();
+}
+function togglePartner(id){const p=partnerById(id);if(!p)return;p.status=p.status==='active'?'paused':'active';toast(LANG==='th'?'อัปเดตสถานะร้านแล้ว':'Partner status updated');rerenderAdmin();}
+function approvePartnerClaim(id){const c=PARTNER_CLAIMS.find(x=>x.id===id);if(!c||c.status!=='pending')return;c.status='approved';c.approvedAt=nowStamp();AUDIT.push({id:NEXT_AUDIT_ID++,ts:nowStamp(),actor:'HQ Admin',role:'admin',action:'partner_claim_approved',memberId:c.memberId,amount:-c.points,reason:c.ref,status:'approved',risk:'low'});DB.save('partner_claims',c);toast(LANG==='th'?'อนุมัติยอดเคลียร์บิลแล้ว ✓':'Claim approved ✓');rerenderAdmin();}
+function payPartnerClaim(id){const c=PARTNER_CLAIMS.find(x=>x.id===id);if(!c||c.status!=='approved')return;c.status='paid';c.paidAt=nowStamp();AUDIT.push({id:NEXT_AUDIT_ID++,ts:nowStamp(),actor:'HQ Admin',role:'admin',action:'partner_paid',memberId:c.memberId,amount:0,reason:c.ref+' ฿'+c.plaaiPay,status:'done',risk:'low'});DB.save('partner_claims',c);toast(LANG==='th'?'บันทึกว่าชำระแล้ว ✓':'Marked paid ✓');rerenderAdmin();}
+function reversePartnerClaim(id){const c=PARTNER_CLAIMS.find(x=>x.id===id);if(!c||!['pending','approved'].includes(c.status))return;const m=memberById(c.memberId);if(m){m.points+=c.points;TX.push({id:NEXT_TX_ID++,memberId:m.id,date:today(),type:'adjust',branch:m.home,pts:c.points,exp:expiryFor(today()),note:{th:'คืนแต้มจากรายการ Partner '+c.ref,en:'Partner redemption reversed '+c.ref}});DB.save('members',m);}c.status='reversed';c.reversedAt=nowStamp();AUDIT.push({id:NEXT_AUDIT_ID++,ts:nowStamp(),actor:'HQ Admin',role:'admin',action:'partner_reverse',memberId:c.memberId,amount:c.points,reason:c.ref,status:'done',risk:'low'});DB.save('partner_claims',c);toast(LANG==='th'?'ยกเลิกรายการและคืนแต้มแล้ว ✓':'Reversed and points refunded ✓');rerenderAdmin();}
 
 /* ----- Referral ----- */
 function adminReferral(){
@@ -1616,7 +1687,7 @@ function saveActivity(id){
 function deleteActivity(id){ ACTIVITIES=ACTIVITIES.filter(x=>x.id!==id); toast(LANG==='th'?'ลบแล้ว':'Deleted'); rerenderAdmin(); }
 
 /* ====================== ADMIN: Security (anomalies · approvals · audit) ======================= */
-const AUDIT_ACTION={adjust_add:{th:'เพิ่มแต้ม',en:'Add points'},adjust_deduct:{th:'หักแต้ม',en:'Deduct points'},grant_request:{th:'ขอมอบแต้ม',en:'Grant request'},grant_approved:{th:'อนุมัติแต้ม',en:'Grant approved'},grant_rejected:{th:'ปฏิเสธคำขอ',en:'Grant rejected'},high_checkout:{th:'เช็กเอาต์สูงผิดปกติ',en:'High checkout'},password_change:{th:'เปลี่ยนรหัสผ่าน',en:'Password change'}};
+const AUDIT_ACTION={adjust_add:{th:'เพิ่มแต้ม',en:'Add points'},adjust_deduct:{th:'หักแต้ม',en:'Deduct points'},grant_request:{th:'ขอมอบแต้ม',en:'Grant request'},grant_approved:{th:'อนุมัติแต้ม',en:'Grant approved'},grant_rejected:{th:'ปฏิเสธคำขอ',en:'Grant rejected'},high_checkout:{th:'เช็กเอาต์สูงผิดปกติ',en:'High checkout'},password_change:{th:'เปลี่ยนรหัสผ่าน',en:'Password change'},partner_redeem:{th:'Partner รับแต้ม',en:'Partner redemption'},partner_claim_approved:{th:'อนุมัติยอด Partner',en:'Partner claim approved'},partner_paid:{th:'ชำระ Partner',en:'Partner paid'},partner_reverse:{th:'ยกเลิก Partner',en:'Partner reversed'}};
 function adminSecurity(){
   const th=LANG==='th';
   const openAlerts=ALERTS.filter(a=>!a.resolved);
@@ -1684,6 +1755,53 @@ function submitStaffGrant(id){
   AUDIT.push({id:NEXT_AUDIT_ID++,ts:nowStamp(),actor,role:'staff',action:'grant_request',memberId:id,amount:amt,reason,status:'pending',risk});
   toast(th?'ส่งคำขอแล้ว รออนุมัติจากแอดมินกลาง ⏳':'Request sent — pending HQ approval ⏳');
   closeModal(); rerenderStaff();
+}
+
+/* ====================== PLAAI PARTNER APP ======================= */
+function partnerClaimTable(list){
+  const th=LANG==='th';
+  const rows=list.slice().sort((a,b)=>(b.date+b.time).localeCompare(a.date+a.time)).map(c=>{const m=memberById(c.memberId),r=REWARDS.find(x=>x.id===c.rewardId);return `<tr><td><code class="mono" style="font-size:11px">${c.ref}</code><div class="muted" style="font-size:11px">${c.date} ${c.time}</div></td><td>${m?m.name:'-'}</td><td>${r?(r.name[LANG]||r.name.th):'-'}<div class="muted" style="font-size:11px">-${c.points} ${th?'แต้ม':'pts'}</div></td><td class="num">฿${fmt(c.plaaiPay)}</td><td>${claimStatusPill(c.status)}</td></tr>`;}).join('');
+  return `<div style="overflow-x:auto"><table style="min-width:680px"><thead><tr><th>${th?'เลขอ้างอิง':'Reference'}</th><th>${t('common.member')}</th><th>${th?'สิทธิ์ที่ใช้':'Reward'}</th><th class="num">${th?'ยอดเคลียร์':'Settlement'}</th><th>${t('common.status')}</th></tr></thead><tbody>${rows||`<tr><td colspan="5" class="empty">—</td></tr>`}</tbody></table></div>`;
+}
+function viewPartnerApp(){
+  const p=partnerById(SESSION.partnerId),th=LANG==='th'; if(!p)return `<div class="empty">Partner account not found</div>`;
+  const nav=['redeem','history','billing'].map(v=>`<button data-pv="${v}" class="${PARTNER_VIEW===v?'active':''}"><span class="ic">${v==='redeem'?'◆':v==='history'?'▤':'฿'}</span>${t('pnav.'+v)}</button>`).join('');
+  const list=PARTNER_CLAIMS.filter(c=>c.partnerId===p.id),todayList=list.filter(c=>c.date===today()),valid=list.filter(c=>c.status!=='reversed');
+  let body='';
+  if(PARTNER_VIEW==='redeem')body=`<div class="section-title"><div><h2>${th?'รับชำระด้วย Plaai Point':'Accept Plaai Point'}</h2><div class="muted" style="font-size:13px">${th?'ตรวจสอบลูกค้า ส่ง OTP และยืนยันการใช้สิทธิ์':'Verify the customer with OTP and confirm redemption'}</div></div><button class="btn primary" onclick="openPartnerRedeem()">+ ${th?'เริ่มรายการใหม่':'New redemption'}</button></div>
+    ${p.status!=='active'?`<div class="hint" style="background:#fbe6e6;border-color:#f0c9c9;color:var(--danger);margin-bottom:14px">${th?'บัญชีร้านถูกระงับ กรุณาติดต่อสำนักงานใหญ่':'Partner account is paused. Contact HQ.'}</div>`:''}
+    <div class="grid cols-3"><div class="card kpi"><div class="ic">✓</div><div class="label">${th?'ใช้สิทธิ์วันนี้':'Today'}</div><div class="val">${todayList.filter(c=>c.status!=='reversed').length}</div></div><div class="card kpi"><div class="ic">★</div><div class="label">${th?'แต้มที่รับวันนี้':'Points today'}</div><div class="val">${fmt(todayList.filter(c=>c.status!=='reversed').reduce((s,c)=>s+c.points,0))}</div></div><div class="card kpi"><div class="ic">฿</div><div class="label">${th?'ยอดเคลียร์วันนี้':'Settlement today'}</div><div class="val">฿${fmt(todayList.filter(c=>c.status!=='reversed').reduce((s,c)=>s+c.plaaiPay,0))}</div></div></div>
+    <div class="card" style="margin-top:16px"><div class="card-h"><h3>${th?'รายการวันนี้':'Today’s redemptions'}</h3></div>${partnerClaimTable(todayList)}</div>`;
+  if(PARTNER_VIEW==='history')body=`<div class="section-title"><div><h2>${t('pnav.history')}</h2><div class="muted" style="font-size:13px">${th?'ทุกรายการที่ร้านยืนยัน พร้อมเลขอ้างอิง':'All confirmed redemptions with references'}</div></div></div><div class="card">${partnerClaimTable(list)}</div>`;
+  if(PARTNER_VIEW==='billing'){
+    const pending=valid.filter(c=>c.status==='pending').reduce((s,c)=>s+c.plaaiPay,0),approved=valid.filter(c=>c.status==='approved').reduce((s,c)=>s+c.plaaiPay,0),paid=valid.filter(c=>c.status==='paid').reduce((s,c)=>s+c.plaaiPay,0);
+    body=`<div class="section-title"><div><h2>${t('pnav.billing')}</h2><div class="muted" style="font-size:13px">${th?'ติดตามยอดที่ Plaai ต้องชำระให้ร้าน':'Track amounts payable by Plaai'}</div></div></div><div class="grid cols-3"><div class="card kpi"><div class="label">${th?'รอตรวจสอบ':'Pending review'}</div><div class="val">฿${fmt(pending)}</div></div><div class="card kpi"><div class="label">${th?'อนุมัติแล้ว':'Approved'}</div><div class="val">฿${fmt(approved)}</div></div><div class="card kpi"><div class="label">${th?'ชำระแล้ว':'Paid'}</div><div class="val">฿${fmt(paid)}</div></div></div><div class="hint" style="margin-top:16px">${th?`ยอดเคลียร์คิด ${p.rate}% ของมูลค่าสิทธิ์ ระบบสำนักงานใหญ่เป็นผู้อนุมัติและบันทึกการชำระ`:`Settlement is ${p.rate}% of reward value. HQ approves and marks payments.`}</div><div class="card" style="margin-top:16px">${partnerClaimTable(valid)}</div>`;
+  }
+  return `<div class="admin-layout"><div class="card pad"><div style="padding:6px 10px 12px;margin-bottom:6px;border-bottom:1px solid var(--line)"><div class="muted" style="font-size:11px;font-weight:700;text-transform:uppercase">Plaai Partner</div><div style="font-weight:800;color:var(--brand-dark);display:flex;align-items:center;gap:7px;margin-top:3px"><span class="dot" style="background:${p.color}"></span>${p.name[LANG]||p.name.th}</div></div><div class="side-nav">${nav}</div></div><div>${body}</div></div>`;
+}
+function openPartnerRedeem(){
+  const p=partnerById(SESSION.partnerId),th=LANG==='th'; if(!p||p.status!=='active'){toast(th?'บัญชีร้านถูกระงับ':'Partner account is paused');return;}
+  const rewards=REWARDS.filter(r=>r.active&&r.cat==='partner'&&r.partnerId===p.id); if(!rewards.length){toast(th?'ร้านนี้ยังไม่มีสิทธิ์ที่เปิดใช้งาน':'No active rewards for this partner');return;}
+  PARTNER_OTP=null;
+  modal(`<div class="m-h"><h3>${th?'ยืนยันการใช้ Plaai Point':'Confirm Plaai Point redemption'}</h3><button class="x" onclick="closeModal()">✕</button></div><div class="m-b">
+    <label class="fld"><span class="lb">${t('common.phone')}</span><div style="display:flex;gap:8px"><input id="po_phone" inputmode="tel" placeholder="+66 / +86 …"><button class="btn ghost" onclick="sendPartnerOtp()" style="white-space:nowrap">${th?'ส่ง OTP':'Send OTP'}</button></div></label>
+    <label class="fld"><span class="lb">${th?'สิทธิ์ที่ลูกค้าใช้':'Reward used'}</span><select id="po_reward">${rewards.map(r=>`<option value="${r.id}">${r.name[LANG]||r.name.th} · ${r.cost} ${th?'แต้ม':'pts'} · ฿${fmt(r.value||r.cost)}</option>`).join('')}</select></label>
+    <label class="fld"><span class="lb">OTP ${th?'จากโทรศัพท์ลูกค้า':'from customer'}</span><input id="po_otp" inputmode="numeric" maxlength="6" placeholder="••••••"></label>
+    <div id="po_status" class="hint">🔒 ${th?'ต้องให้ลูกค้าแจ้ง OTP ก่อนร้านกดยืนยัน ระบบจึงจะหักแต้ม':'Customer must provide the OTP before points can be deducted.'}</div></div>
+    <div class="m-f"><button class="btn primary" onclick="confirmPartnerRedeem()">✓ ${th?'ยืนยันใช้สิทธิ์':'Confirm redemption'}</button><button class="btn ghost" onclick="closeModal()">${t('common.cancel')}</button></div>`);
+}
+function sendPartnerOtp(){
+  const th=LANG==='th',phone=$("#po_phone").value.trim(),m=findMemberByPhone(phone); if(!m){toast(th?'ไม่พบสมาชิกจากเบอร์นี้':'Member not found');return;}
+  const code='123456'; PARTNER_OTP={phone:digits(phone),code,partnerId:SESSION.partnerId,expires:Date.now()+5*60*1000}; const el=$("#po_status"); if(el)el.innerHTML=`✅ ${th?`ส่ง OTP แล้ว · โหมดสาธิตใช้รหัส <b>${code}</b>`:`OTP sent · demo code is <b>${code}</b>`}<div style="margin-top:4px">${m.name} · ${fmt(m.points)} ${th?'แต้ม':'pts'}</div>`; toast(th?'ส่ง OTP ให้ลูกค้าแล้ว':'OTP sent');
+}
+function confirmPartnerRedeem(){
+  const th=LANG==='th',p=partnerById(SESSION.partnerId),phone=$("#po_phone").value.trim(),m=findMemberByPhone(phone),r=REWARDS.find(x=>x.id===parseInt($("#po_reward").value)),otp=$("#po_otp").value.trim();
+  if(!p||p.status!=='active'){toast(th?'บัญชีร้านถูกระงับ':'Partner account is paused');return;} if(!m){toast(th?'ไม่พบสมาชิก':'Member not found');return;} if(!r||r.partnerId!==p.id){toast(th?'สิทธิ์นี้ไม่ใช่ของร้าน':'Reward does not belong to this partner');return;} if(m.points<r.cost){toast(th?'แต้มลูกค้าไม่พอ':'Not enough points');return;}
+  if(!PARTNER_OTP||PARTNER_OTP.partnerId!==p.id||PARTNER_OTP.phone!==digits(phone)||PARTNER_OTP.expires<Date.now()||otp!==PARTNER_OTP.code){toast(th?'OTP ไม่ถูกต้องหรือหมดอายุ':'OTP is incorrect or expired');return;}
+  const duplicate=PARTNER_CLAIMS.some(c=>c.partnerId===p.id&&c.memberId===m.id&&c.rewardId===r.id&&c.date===today()&&c.status!=='reversed'); if(duplicate){toast(th?'พบรายการเดียวกันของลูกค้าวันนี้ กรุณาตรวจสอบประวัติ':'Duplicate redemption found today');return;}
+  m.points-=r.cost; const id=NEXT_PARTNER_CLAIM_ID++,faceValue=r.value||r.cost,claim={id,ref:'PP-'+today().replace(/-/g,'').slice(2)+'-'+String(id).padStart(3,'0'),partnerId:p.id,memberId:m.id,rewardId:r.id,points:r.cost,faceValue,plaaiPay:Math.round(faceValue*p.rate/100),date:today(),time:new Date().toTimeString().slice(0,5),status:'pending',otpVerified:true}; PARTNER_CLAIMS.push(claim);
+  TX.push({id:NEXT_TX_ID++,memberId:m.id,date:today(),type:'redeem',branch:m.home,pts:-r.cost,exp:'',note:{th:`ใช้สิทธิ์ที่ ${p.name.th}: ${r.name.th}`,en:`Redeemed at ${p.name.en}: ${r.name.en}`}}); AUDIT.push({id:NEXT_AUDIT_ID++,ts:nowStamp(),actor:p.name.en,role:'partner',action:'partner_redeem',memberId:m.id,amount:-r.cost,reason:claim.ref,status:'pending',risk:'low'}); DB.save('members',m);DB.save('partner_claims',claim);PARTNER_OTP=null;
+  toast(th?`ยืนยันแล้ว -${r.cost} แต้ม · ${claim.ref}`:`Confirmed -${r.cost} pts · ${claim.ref}`);closeModal();rerenderPartner();
 }
 
 /* ====================== STAFF APP (per property) ======================= */
@@ -1874,7 +1992,7 @@ function viewCustomerPortal(){
   const future=memTx.filter(x=>x.pts>0&&x.exp&&x.exp>=today()).sort((a,b)=>a.exp.localeCompare(b.exp));
   const expBlock=future.length?`<div class="card pad portal-note" style="margin-top:12px"><div style="font-size:12px;font-weight:800;color:var(--brand-dark)">⏳ ${ct('expSoon')}</div><div style="display:flex;justify-content:space-between;gap:8px;margin-top:4px;font-size:12.5px"><span>+${future[0].pts} ${ct('pts')} · ${L3(future[0].note)}</span><span class="muted" style="font-size:11.5px;white-space:nowrap">${future[0].exp}</span></div></div>`:'';
   const hist=memTx.slice().sort((a,b)=>b.date.localeCompare(a.date)).map(x=>`<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid var(--line)"><div style="min-width:0"><div style="font-weight:700;line-height:1.35">${L3(x.note)}</div><div class="muted" style="font-size:11.5px;margin-top:2px">${x.date}${x.exp?` · ${ct('expOn')} ${x.exp}`:''}</div></div><div style="font-weight:800;color:${x.pts<0?'var(--danger)':'var(--ok)'};white-space:nowrap">${x.pts>0?'+':''}${x.pts}</div></div>`).join("");
-  const rewards=REWARDS.filter(r=>r.active).map(r=>{ const can=m.points>=r.cost&&m.points>=CONFIG.minRedeem; return `<div class="card pad" style="display:flex;gap:10px;align-items:center;margin-bottom:10px"><img class="thumb" src="${(r.imgs&&r.imgs[0])||''}"><div style="flex:1"><div style="font-weight:700">${L3(r.name)}</div><div class="muted" style="font-size:12px">${r.cost} ${ct('pts')} ${r.cat==='partner'?'· Plaai Partner':''}</div></div><button class="btn ${can?'primary':'ghost'} sm" ${can?'':'disabled style="opacity:.5"'} onclick="custRedeem(${r.id})">${can?ct('redeem'):ct('needMore')}</button></div>`; }).join("");
+  const rewards=REWARDS.filter(r=>r.active).map(r=>{ const can=m.points>=r.cost&&m.points>=CONFIG.minRedeem,isPartner=r.cat==='partner'; const label=isPartner?(CARD_LANG==='th'?'ใช้ที่ร้าน':CARD_LANG==='zh'?'到店使用':'Use at partner'):(can?ct('redeem'):ct('needMore')); return `<div class="card pad" style="display:flex;gap:10px;align-items:center;margin-bottom:10px"><img class="thumb" src="${(r.imgs&&r.imgs[0])||''}"><div style="flex:1"><div style="font-weight:700">${L3(r.name)}</div><div class="muted" style="font-size:12px">${r.cost} ${ct('pts')} ${isPartner?`· ${partnerName(r.partnerId)}`:''}</div></div><button class="btn ${can?'primary':'ghost'} sm" ${can?'':'disabled style="opacity:.5"'} onclick="custRedeem(${r.id})">${label}</button></div>`; }).join("");
   const myPerks=PERKS.filter(p=>tierRank[m.tier]>=tierRank[p.tier]);
   const perksBlock=myPerks.length?myPerks.map(p=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)"><span>✓ ${L3(p)}</span><span class="pill ${p.tier==='platinum'?'green':'gold'}">${cardTier(p.tier)}</span></div>`).join(""):`<div class="empty" style="padding:20px">${ct('noPerk')}</div>`;
   // --- Activities the customer can see (public + member-exclusive they qualify for) ---
@@ -1953,7 +2071,7 @@ function custShareCard(){
   if(navigator.clipboard) navigator.clipboard.writeText(link);
   toast(ct('copied')+' ✓');
 }
-function custRedeem(id){ const m=CUSTOMER; const r=REWARDS.find(x=>x.id===id); if(m.points<r.cost)return; m.points-=r.cost; TX.push({id:NEXT_TX_ID++,memberId:m.id,date:today(),type:"redeem",branch:m.home,pts:-r.cost,exp:"",note:{th:"แลก: "+r.name.th,en:"Redeemed: "+r.name.en}}); DB.save('members',m); toast(ct('redeemed')+` -${r.cost} ${ct('pts')}`); render(); }
+function custRedeem(id){ const m=CUSTOMER; const r=REWARDS.find(x=>x.id===id); if(m.points<r.cost)return; if(r.cat==='partner'){toast(CARD_LANG==='th'?'แสดงบัตรนี้ที่ร้าน Partner ร้านจะส่ง OTP เพื่อยืนยัน':'Show this card at the partner. They will send an OTP.');return;} m.points-=r.cost; TX.push({id:NEXT_TX_ID++,memberId:m.id,date:today(),type:"redeem",branch:m.home,pts:-r.cost,exp:"",note:{th:"แลก: "+r.name.th,en:"Redeemed: "+r.name.en}}); DB.save('members',m); toast(ct('redeemed')+` -${r.cost} ${ct('pts')}`); render(); }
 
 /* ====================== SURVEY (public link) ======================= */
 /* Reached via SMS link after checkout. For demo, opened from login → customer, but we keep a standalone entry too. */
@@ -2107,7 +2225,7 @@ function clearPhoto(id){ const m=memberById(id); if(!m)return; m.photo=''; m.pho
 
 let RW_UPLOADS=[];   // compressed data-URLs the admin uploaded in the reward editor
 function openReward(id){
-  const r=id?REWARDS.find(x=>x.id===id):{name:{th:"",en:""},cost:100,cat:"cash",imgs:[]};
+  const r=id?REWARDS.find(x=>x.id===id):{name:{th:"",en:""},cost:100,value:200,cat:"cash",partnerId:PARTNERS[0]?.id||'',imgs:[]};
   RW_UPLOADS=[];
   const th=LANG==='th';
   const imgInputs=[0,1,2].map(i=>`<input id="rw_img${i}" placeholder="${t('txt.imgUrl')} ${i+1}" value="${(r.imgs&&r.imgs[i])?r.imgs[i]:''}" style="margin-bottom:6px">`).join("");
@@ -2115,6 +2233,7 @@ function openReward(id){
     <div class="m-b">
       <label class="fld"><span class="lb">${t('common.name')}</span><input id="rw_name" value="${r.name[LANG]||''}"></label>
       <div class="row"><label class="fld"><span class="lb">${t('common.points')}</span><input id="rw_cost" type="number" value="${r.cost}"></label><label class="fld"><span class="lb">${th?'ประเภท':'Category'}</span><select id="rw_cat"><option value="cash" ${r.cat==='cash'?'selected':''}>${th?'ส่วนลด/เงินสด':'Cash'}</option><option value="partner" ${r.cat==='partner'?'selected':''}>Plaai Partner</option></select></label></div>
+      <div class="row"><label class="fld"><span class="lb">Partner ${th?'ผู้ให้บริการ':'provider'}</span><select id="rw_partner">${PARTNERS.map(p=>`<option value="${p.id}" ${r.partnerId===p.id?'selected':''}>${p.name[LANG]||p.name.th}</option>`).join('')}</select></label><label class="fld"><span class="lb">${th?'มูลค่าสิทธิ์ (บาท)':'Reward value (THB)'}</span><input id="rw_value" type="number" value="${r.value||r.cost}"></label></div>
       <label class="fld"><span class="lb">${t('txt.images')}</span>
         <div style="border:1px dashed var(--line);border-radius:10px;padding:10px;margin-bottom:8px">
           <input type="file" accept="image/*" multiple id="rw_file" onchange="rwUploadImgs(event)">
@@ -2140,11 +2259,11 @@ async function rwUploadImgs(e){
 function rwRemoveImg(i){ RW_UPLOADS.splice(i,1); const prev=$("#rw_prev"); if(prev) prev.innerHTML=RW_UPLOADS.map((d,j)=>`<span style="position:relative;display:inline-block"><img src="${d}"><button onclick="rwRemoveImg(${j})" style="position:absolute;top:-6px;right:-6px;width:18px;height:18px;border:0;border-radius:50%;background:var(--danger);color:#fff;font-size:11px;line-height:1;cursor:pointer">✕</button></span>`).join(""); }
 function saveReward(id){
   const name=$("#rw_name").value.trim(); if(!name){toast(LANG==='th'?'ใส่ชื่อรางวัล':'Enter name');return;}
-  const cost=parseInt($("#rw_cost").value)||100, cat=$("#rw_cat").value;
+  const cost=parseInt($("#rw_cost").value)||100, cat=$("#rw_cat").value,partnerId=$("#rw_partner").value,value=parseInt($("#rw_value").value)||cost;
   const urls=[0,1,2].map(i=>$("#rw_img"+i).value.trim()).filter(Boolean);
   const imgs=[...RW_UPLOADS, ...urls].slice(0,3);   // uploaded (compressed) first, then any URLs
-  if(id){ const r=REWARDS.find(x=>x.id===id); r.name={th:name,en:name}; r.cost=cost; r.cat=cat; r.imgs=imgs.length?imgs:r.imgs; DB.save('rewards',r); }
-  else { REWARDS.push({id:NEXT_REWARD_ID++,name:{th:name,en:name},cost,cat,active:true,imgs:imgs.length?imgs:[ph("🎁","#3d5675")]}); }
+  if(id){ const r=REWARDS.find(x=>x.id===id); r.name={th:name,en:name}; r.cost=cost; r.value=value; r.cat=cat; r.partnerId=cat==='partner'?partnerId:''; r.imgs=imgs.length?imgs:r.imgs; DB.save('rewards',r); }
+  else { REWARDS.push({id:NEXT_REWARD_ID++,name:{th:name,en:name},cost,value,cat,partnerId:cat==='partner'?partnerId:'',active:true,imgs:imgs.length?imgs:[ph("🎁","#3d5675")]}); }
   RW_UPLOADS=[];
   toast(LANG==='th'?'บันทึกของรางวัลแล้ว ✓':'Reward saved ✓'); closeModal(); rerenderAdmin();
 }
@@ -2152,9 +2271,11 @@ function saveReward(id){
 /* ====================== bindings ======================= */
 function rerenderAdmin(){ if(SESSION&&SESSION.role==="admin"){ const el=document.querySelector('.admin-layout'); if(el)el.parentElement.innerHTML=viewAdmin(); bindDynamic(); } }
 function rerenderStaff(){ if(SESSION&&SESSION.role==="staff"){ const el=document.querySelector('.admin-layout'); if(el)el.parentElement.innerHTML=viewStaffApp(); bindDynamic(); } }
+function rerenderPartner(){ if(SESSION&&SESSION.role==="partner"){ const el=document.querySelector('.admin-layout'); if(el)el.parentElement.innerHTML=viewPartnerApp(); bindDynamic(); } }
 function bindDynamic(){
   document.querySelectorAll('[data-av]').forEach(b=>b.onclick=()=>{ADMIN_VIEW=b.dataset.av;render();});
   document.querySelectorAll('[data-sv]').forEach(b=>b.onclick=()=>{STAFF_VIEW=b.dataset.sv;render();});
+  document.querySelectorAll('[data-pv]').forEach(b=>b.onclick=()=>{PARTNER_VIEW=b.dataset.pv;render();});
 }
 function bindChrome(){
   const lt=$("#langToggle"); if(lt)lt.querySelectorAll("button").forEach(b=>b.onclick=()=>{ LANG=b.dataset.lang; document.documentElement.lang=LANG; render(); });
