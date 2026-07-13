@@ -104,19 +104,32 @@
   .admin-layout{display:grid;grid-template-columns:220px 1fr;gap:18px;align-items:start}
   @media(max-width:820px){.admin-layout{grid-template-columns:1fr}}
 
-  .device{max-width:390px;margin:0 auto;background:#fffdf9;border-radius:24px;border:1px solid #ebe7df;box-shadow:0 10px 36px rgba(84,75,61,.10);overflow:hidden}
-  .device .status{height:12px;background:#e9dfd0}
-  .mcard{background:linear-gradient(145deg,#fff8e9,#f6dfbd);color:#554c40;border:1px solid rgba(126,105,76,.12);border-radius:18px;padding:14px 15px;position:relative;overflow:hidden;box-shadow:0 8px 22px rgba(111,91,64,.10)}
-  .mcard.tier-gold{background:linear-gradient(145deg,#fff8df,#f2cf78)}
-  .mcard.tier-platinum{background:linear-gradient(145deg,#eef8ef,#bfe1ca)}
-  .mcard::after{content:"";position:absolute;right:-34px;bottom:-52px;width:126px;height:126px;background:rgba(255,255,255,.35);border-radius:50%}
-  .mcard .tier{position:absolute;right:14px;top:13px;background:rgba(255,255,255,.72);color:#625647;border:1px solid rgba(98,86,71,.10);padding:3px 10px;border-radius:999px;font-size:10.5px;font-weight:800;letter-spacing:.2px}
+  .device{max-width:390px;margin:0 auto;background:#f7f9fc;border-radius:24px;border:1px solid #dfe5ec;box-shadow:0 12px 38px rgba(28,43,60,.13);overflow:hidden}
+  .device .status{height:14px;background:var(--brand-dark)}
+  .device .card{border-color:#e1e7ee;box-shadow:0 3px 12px rgba(36,52,69,.045);border-radius:14px}
+  .device .card.pad{padding:14px}
+  .device .muted{color:#6c7888}
+  .device .hint{background:var(--brand-light);border-color:#d4deea;color:var(--brand-dark)}
+  .device .btn{border-radius:9px}
+  .device .tabbar{gap:0;margin-bottom:14px;border-bottom-color:#dce3eb;justify-content:space-between;flex-wrap:nowrap}
+  .device .tabbar button{margin-right:0;padding:10px 3px;font-size:12.5px;white-space:nowrap}
+  .portal-note{border-color:#d9e2ec!important;background:#f1f5fa!important}
+  .portal-referral{background:#fbf6e8!important;border-color:#eadcaf!important}
+  .portal-share-title{color:var(--brand-dark);letter-spacing:.1px}
+  .share-actions{display:grid;grid-template-columns:1.35fr .8fr 1fr;gap:7px;margin-top:9px}
+  .share-actions .btn{padding:7px 8px;text-align:center;white-space:nowrap}
+  .customer-topbar .logo{white-space:nowrap;flex-shrink:0}
+  .customer-topbar .btn-logout{white-space:nowrap}
+  .mcard{background:linear-gradient(135deg,var(--brand),var(--brand-dark));color:#fff;border:1px solid rgba(255,255,255,.10);border-radius:18px;padding:14px 15px;position:relative;overflow:hidden;box-shadow:0 9px 24px rgba(42,61,84,.24)}
+  .mcard::before{content:"";position:absolute;left:-54px;bottom:-74px;width:150px;height:150px;background:rgba(255,255,255,.045);border-radius:50%}
+  .mcard::after{content:"";position:absolute;right:-34px;top:-38px;width:126px;height:126px;background:rgba(255,255,255,.075);border-radius:50%}
+  .mcard .tier{position:absolute;right:14px;top:13px;background:var(--gold);color:#fff;border:1px solid rgba(255,255,255,.16);padding:3px 10px;border-radius:999px;font-size:10.5px;font-weight:800;letter-spacing:.25px}
   .pts-big{font-size:32px;font-weight:800;line-height:1;letter-spacing:-.6px}
   .tier-admin-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
   @media(max-width:900px){.tier-admin-grid{grid-template-columns:1fr}}
   .tier-rule{padding:16px;border-top:5px solid #d8c7ae}
   .tier-rule.gold-level{border-top-color:#e5bb51}.tier-rule.platinum-level{border-top-color:#8fc4a2}
-  @media(max-width:480px){.device>div[style*="padding:16px"]{padding:12px!important}.mcard{padding:13px 14px}.pts-big{font-size:30px}}
+  @media(max-width:480px){.device>div[style*="padding:16px"]{padding:12px!important}.mcard{padding:13px 14px}.pts-big{font-size:30px}.device .tabbar button{font-size:12px}.customer-topbar{gap:7px;padding:8px 10px}.customer-topbar .logo{font-size:15px;gap:7px}.customer-topbar .logo .mark{width:30px;height:30px;border-radius:8px;font-size:17px}.customer-language button{padding:5px 8px!important}.customer-topbar .btn-logout{padding:6px 9px;font-size:11px}}
 
   .modal-bg{position:fixed;inset:0;background:rgba(16,24,40,.5);display:grid;place-items:center;z-index:100;padding:16px}
   .modal{background:#fff;border-radius:16px;max-width:560px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3);max-height:92vh;overflow:auto}
@@ -624,7 +637,7 @@ let CARD_LANG=localStorage.getItem('plaai_lang')||CARD_PARAMS.get('lang')||'th';
 if(!['th','en','zh'].includes(CARD_LANG))CARD_LANG='th';
 
 const CARDI18N={
-  th:{heroTitle:"เช็คแต้มสะสมของคุณ",heroSub:"กรอกเบอร์โทรที่ลงทะเบียนกับโรงแรมเพื่อดูแต้ม",welcome:"ยินดีต้อนรับสู่",phone:"เบอร์โทรศัพท์",phonePh:"เช่น +66 81 234 5678",check:"ดูแต้มของฉัน",notfound:"ไม่พบเบอร์นี้ในระบบ กรุณาติดต่อพนักงานเพื่อสมัครสมาชิก",hi:"สวัสดีค่ะ",member:"สมาชิก",pts:"แต้ม",yourPoints:"แต้มสะสมของคุณ",worth:"เทียบเท่ายอดใช้จ่าย",expSoon:"แต้มใกล้หมดอายุ",expOn:"หมดอายุ",refTitle:"รหัสแนะนำเพื่อนของคุณ",refSub:"ชวนเพื่อนพัก รับ 50 แต้ม/คน เมื่อเพื่อนเช็กเอาต์",copy:"คัดลอก",copied:"คัดลอกแล้ว",tabHist:"ประวัติ",tabRew:"แลกรางวัล",tabPerk:"สิทธิพิเศษ",redeem:"แลก",needMore:"แต้มไม่พอ",noHist:"ยังไม่มีรายการ",noPerk:"ยังไม่มีสิทธิ์พิเศษในระดับนี้",perkAuto:"สิทธิ์อัตโนมัติตามระดับ",changeNo:"เปลี่ยนเบอร์",redeemed:"แลกสำเร็จ!",tabAct:"กิจกรรม",memberOnly:"เฉพาะสมาชิก",free:"ฟรี",joinFree:"เข้าร่วมฟรี",joinRedeem:"ใช้แต้มเข้าร่วม",joined:"ลงชื่อแล้ว",joinedOk:"ลงชื่อเข้าร่วมแล้ว! 🎉",noActs:"ยังไม่มีกิจกรรมสำหรับคุณตอนนี้",exclusiveInvite:"คำเชิญพิเศษสำหรับสมาชิก",seeAll:"ดูทั้งหมด",pastActs:"กิจกรรมที่ผ่านมา",addPhoto:"เพิ่มรูปโปรไฟล์จาก",photoUpdated:"อัปเดตรูปโปรไฟล์แล้ว"},
+  th:{heroTitle:"เช็กแต้มสะสม",heroSub:"กรอกเบอร์โทรที่ลงทะเบียนไว้",welcome:"ยินดีต้อนรับสู่",phone:"เบอร์โทรศัพท์",phonePh:"เช่น +66 81 234 5678",check:"ดูแต้มของฉัน",notfound:"ไม่พบเบอร์นี้ กรุณาติดต่อพนักงาน",hi:"สวัสดีค่ะ",member:"สมาชิก",pts:"แต้ม",yourPoints:"แต้มของคุณ",worth:"เทียบเท่ายอดใช้จ่าย",expSoon:"แต้มใกล้หมดอายุ",expOn:"หมดอายุ",refTitle:"รหัสแนะนำเพื่อน",refSub:"ชวนเพื่อนพัก รับ 50 แต้มหลังเช็กเอาต์",copy:"คัดลอก",copied:"คัดลอกแล้ว",tabHist:"ประวัติ",tabRew:"รางวัล",tabPerk:"สิทธิ์",redeem:"แลก",needMore:"แต้มไม่พอ",noHist:"ยังไม่มีรายการ",noPerk:"ยังไม่มีสิทธิ์พิเศษในระดับนี้",perkAuto:"สิทธิ์ตามระดับสมาชิก",changeNo:"เปลี่ยนเบอร์",redeemed:"แลกสำเร็จ!",tabAct:"กิจกรรม",memberOnly:"เฉพาะสมาชิก",free:"ฟรี",joinFree:"เข้าร่วมฟรี",joinRedeem:"ใช้แต้มเข้าร่วม",joined:"ลงชื่อแล้ว",joinedOk:"ลงชื่อเข้าร่วมแล้ว! 🎉",noActs:"ยังไม่มีกิจกรรมสำหรับคุณ",exclusiveInvite:"กิจกรรมสำหรับสมาชิก",seeAll:"ดูทั้งหมด",pastActs:"กิจกรรมที่ผ่านมา",addPhoto:"เพิ่มรูปโปรไฟล์จาก",photoUpdated:"อัปเดตรูปโปรไฟล์แล้ว"},
   en:{heroTitle:"Check your points",heroSub:"Enter the phone number registered with the hotel",welcome:"Welcome to",phone:"Phone number",phonePh:"e.g. +66 81 234 5678",check:"View my points",notfound:"Phone not found. Please ask our staff to register you.",hi:"Hello",member:"Member",pts:"pts",yourPoints:"Your points",worth:"Equivalent spend",expSoon:"Expiring soon",expOn:"Expires",refTitle:"Your referral code",refSub:"Refer a friend, get 50 pts each when they check out",copy:"Copy",copied:"Copied",tabHist:"History",tabRew:"Rewards",tabPerk:"Perks",redeem:"Redeem",needMore:"Not enough",noHist:"No activity yet",noPerk:"No perks at this tier yet",perkAuto:"Auto perks by tier",changeNo:"Change number",redeemed:"Redeemed!",tabAct:"Events",memberOnly:"Members only",free:"Free",joinFree:"Join free",joinRedeem:"Join with points",joined:"You're in",joinedOk:"You're signed up! 🎉",noActs:"No events for you right now",exclusiveInvite:"Exclusive member invite",seeAll:"See all",pastActs:"Past events",addPhoto:"Add profile photo from",photoUpdated:"Profile photo updated"},
   zh:{heroTitle:"查询您的积分",heroSub:"输入在酒店登记的手机号码即可查看积分",welcome:"欢迎光临",phone:"手机号码",phonePh:"例如 +86 138 8888 6621",check:"查看我的积分",notfound:"未找到该号码，请联系前台登记会员。",hi:"您好",member:"会员",pts:"分",yourPoints:"您的积分",worth:"约合消费",expSoon:"即将到期的积分",expOn:"到期",refTitle:"您的推荐码",refSub:"推荐好友入住，好友退房后各得50分",copy:"复制",copied:"已复制",tabHist:"记录",tabRew:"兑换",tabPerk:"专属权益",redeem:"兑换",needMore:"积分不足",noHist:"暂无记录",noPerk:"当前等级暂无权益",perkAuto:"按等级自动享有",changeNo:"更换号码",redeemed:"兑换成功！",tabAct:"活动",memberOnly:"会员专属",free:"免费",joinFree:"免费参加",joinRedeem:"用积分参加",joined:"已报名",joinedOk:"报名成功！🎉",noActs:"暂时没有适合您的活动",exclusiveInvite:"会员专属邀请",seeAll:"查看全部",pastActs:"往期活动",addPhoto:"添加头像来自",photoUpdated:"头像已更新"},
 };
@@ -638,10 +651,10 @@ function setCardLang(l){ CARD_LANG=l; localStorage.setItem('plaai_lang',l); docu
 function customerSignOut(){ CUSTOMER=null; localStorage.removeItem('plaai_phone'); render(); }
 function customerShell(inner){
   const langs=['th','en','zh'].map(l=>`<button onclick="setCardLang('${l}')" style="border:0;padding:6px 11px;border-radius:999px;font-size:12px;font-weight:700;background:${CARD_LANG===l?'#fff':'rgba(255,255,255,.15)'};color:${CARD_LANG===l?'var(--brand)':'#fff'}">${l==='th'?'ไทย':l==='en'?'EN':'中文'}</button>`).join("");
-  return `<div class="topbar" style="justify-content:space-between">
+  return `<div class="topbar customer-topbar" style="justify-content:space-between">
      <div class="logo"><span class="mark">พ</span><span>Plaai <span style="opacity:.8;font-weight:600">Point</span></span></div>
      <div style="display:flex;gap:6px;align-items:center">
-       <div style="display:flex;gap:4px;background:rgba(255,255,255,.12);border-radius:999px;padding:2px">${langs}</div>
+       <div class="customer-language" style="display:flex;gap:4px;background:rgba(255,255,255,.12);border-radius:999px;padding:2px">${langs}</div>
        <button class="btn-logout" onclick="customerSignOut()">${ct('changeNo')}</button>
      </div>
    </div><div class="wrap">${inner}</div>`;
@@ -1800,23 +1813,23 @@ function viewCustomerPortal(){
   const m=CUSTOMER; const worth=m.points*CONFIG.bahtPerPoint;
   const shareLink=buildCardLink(CARD_BRANCH||'', CARD_LANG||'th');
   const shareMsg=(CARD_LANG==='zh'?'查看我的 Plaai 会员卡和积分：':CARD_LANG==='en'?'View my Plaai member card & points: ':'ดูบัตรสมาชิก Plaai และแต้มของฉัน: ');
-  const shareTitle=(CARD_LANG==='zh'?'保存 / 分享我的会员卡':CARD_LANG==='en'?'Save / share my card':'บันทึก / แชร์บัตรของฉัน');
-  const shareBtn=(CARD_LANG==='zh'?'保存到我的手机':CARD_LANG==='en'?'Save to my phone':'บันทึกไว้ในเครื่อง');
-  const shareSub=(CARD_LANG==='zh'?'保存链接，下次从 LINE / WeChat / WhatsApp 一键打开':CARD_LANG==='en'?'Save the link to reopen anytime from LINE / WeChat / WhatsApp':'บันทึกลิงก์ไว้ เปิดดูบัตรจาก LINE / WeChat / WhatsApp ได้ทุกเมื่อ');
+  const shareTitle=(CARD_LANG==='zh'?'保存会员卡':CARD_LANG==='en'?'Save member card':'บันทึกบัตรสมาชิก');
+  const shareBtn=(CARD_LANG==='zh'?'保存会员卡':CARD_LANG==='en'?'Save card':'บันทึกบัตร');
+  const shareSub=(CARD_LANG==='zh'?'保存链接，随时打开会员卡':CARD_LANG==='en'?'Save the link to reopen your card anytime':'เก็บลิงก์ไว้ เปิดบัตรได้ทุกเมื่อ');
   const shareLineHref='https://social-plugins.line.me/lineit/share?url='+encodeURIComponent(shareLink);
   const shareWaHref='https://wa.me/?text='+encodeURIComponent(shareMsg+shareLink);
-  const shareBlock=`<div class="card pad" style="margin-top:14px">
-      <div style="font-size:12px;font-weight:700;margin-bottom:3px">🔗 ${shareTitle}</div>
+  const shareBlock=`<div class="card pad" style="margin-top:12px">
+      <div class="portal-share-title" style="font-size:12px;font-weight:800;margin-bottom:3px">🔗 ${shareTitle}</div>
       <div class="muted" style="font-size:11px;margin-bottom:8px">${shareSub}</div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button class="btn primary sm" onclick="custShareCard()">📲 ${shareBtn}</button>
-        <a class="btn ghost sm" style="text-decoration:none" target="_blank" rel="noopener" href="${shareLineHref}"><span style="color:#06C755">💬</span> LINE</a>
-        <a class="btn ghost sm" style="text-decoration:none" target="_blank" rel="noopener" href="${shareWaHref}"><span style="color:#25D366">📱</span> WhatsApp</a>
+      <div class="share-actions">
+        <button class="btn primary sm" onclick="custShareCard()">${shareBtn}</button>
+        <a class="btn ghost sm" style="text-decoration:none;color:#079447" target="_blank" rel="noopener" href="${shareLineHref}">LINE</a>
+        <a class="btn ghost sm" style="text-decoration:none;color:#168b52" target="_blank" rel="noopener" href="${shareWaHref}">WhatsApp</a>
       </div></div>`;
   const memTx=TX.filter(x=>x.memberId===m.id);
   const future=memTx.filter(x=>x.pts>0&&x.exp&&x.exp>=today()).sort((a,b)=>a.exp.localeCompare(b.exp));
-  const expBlock=future.length?`<div class="card pad" style="margin-top:14px;border-color:#f0d9b0;background:#fdf7ea"><div style="font-size:12px;font-weight:700;color:#8a6a1f">⏳ ${ct('expSoon')}</div><div style="display:flex;justify-content:space-between;margin-top:4px"><span>+${future[0].pts} ${ct('pts')} · ${L3(future[0].note)}</span><span class="muted" style="font-size:12px">${ct('expOn')} ${future[0].exp}</span></div></div>`:'';
-  const hist=memTx.slice().sort((a,b)=>b.date.localeCompare(a.date)).map(x=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid var(--line)"><div><div style="font-weight:600">${L3(x.note)}</div><div class="muted" style="font-size:11.5px">${x.date} · ${cardProp(x.branch)}${x.exp?` · ${ct('expOn')} ${x.exp}`:''}</div></div><div style="font-weight:800;color:${x.pts<0?'var(--danger)':'var(--ok)'}">${x.pts>0?'+':''}${x.pts}</div></div>`).join("");
+  const expBlock=future.length?`<div class="card pad portal-note" style="margin-top:12px"><div style="font-size:12px;font-weight:800;color:var(--brand-dark)">⏳ ${ct('expSoon')}</div><div style="display:flex;justify-content:space-between;gap:8px;margin-top:4px;font-size:12.5px"><span>+${future[0].pts} ${ct('pts')} · ${L3(future[0].note)}</span><span class="muted" style="font-size:11.5px;white-space:nowrap">${future[0].exp}</span></div></div>`:'';
+  const hist=memTx.slice().sort((a,b)=>b.date.localeCompare(a.date)).map(x=>`<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid var(--line)"><div style="min-width:0"><div style="font-weight:700;line-height:1.35">${L3(x.note)}</div><div class="muted" style="font-size:11.5px;margin-top:2px">${x.date}${x.exp?` · ${ct('expOn')} ${x.exp}`:''}</div></div><div style="font-weight:800;color:${x.pts<0?'var(--danger)':'var(--ok)'};white-space:nowrap">${x.pts>0?'+':''}${x.pts}</div></div>`).join("");
   const rewards=REWARDS.filter(r=>r.active).map(r=>{ const can=m.points>=r.cost&&m.points>=CONFIG.minRedeem; return `<div class="card pad" style="display:flex;gap:10px;align-items:center;margin-bottom:10px"><img class="thumb" src="${(r.imgs&&r.imgs[0])||''}"><div style="flex:1"><div style="font-weight:700">${L3(r.name)}</div><div class="muted" style="font-size:12px">${r.cost} ${ct('pts')} ${r.cat==='partner'?'· Plaai Partner':''}</div></div><button class="btn ${can?'primary':'ghost'} sm" ${can?'':'disabled style="opacity:.5"'} onclick="custRedeem(${r.id})">${can?ct('redeem'):ct('needMore')}</button></div>`; }).join("");
   const myPerks=PERKS.filter(p=>tierRank[m.tier]>=tierRank[p.tier]);
   const perksBlock=myPerks.length?myPerks.map(p=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)"><span>✓ ${L3(p)}</span><span class="pill ${p.tier==='platinum'?'green':'gold'}">${cardTier(p.tier)}</span></div>`).join(""):`<div class="empty" style="padding:20px">${ct('noPerk')}</div>`;
@@ -1839,7 +1852,7 @@ function viewCustomerPortal(){
   }).join("")||`<div class="empty">${ct('noActs')}</div>`;
   const actPast=ACTIVITIES.filter(a=>a.date<today()).sort((a,b)=>b.date.localeCompare(a.date)).slice(0,4).map(a=>`<div style="display:flex;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)"><span style="font-size:20px">${a.cover}</span><div style="flex:1"><div style="font-weight:600;font-size:13px">${L3(a.title)}</div><div class="muted" style="font-size:11.5px">${a.date}${a.recap?' · '+L3(a.recap):''}</div></div></div>`).join("");
   const nextAct=myActs.find(a=>!joinedActs.includes(a.id))||myActs[0];
-  const actTeaser=nextAct?`<div class="card pad" style="margin-top:14px;background:linear-gradient(135deg,#2a3d54,#3d5675);color:#fff;border:0">
+  const actTeaser=nextAct?`<div class="card pad" style="margin-top:12px;background:linear-gradient(135deg,var(--brand-dark),var(--brand));color:#fff;border:0">
       <div style="font-size:11.5px;opacity:.85;font-weight:700">👑 ${ct('exclusiveInvite')}</div>
       <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:6px"><div><b>${L3(nextAct.title)}</b><div style="font-size:12px;opacity:.85">📅 ${nextAct.date} · ${nextAct.time}</div></div><button class="btn gold sm" onclick="gotoTab('act')">${ct('seeAll')}</button></div>
     </div>`:'';
@@ -1850,15 +1863,15 @@ function viewCustomerPortal(){
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:11px">
         ${avatarBox(m,44,'border:2px solid rgba(255,255,255,.72)')}
         <div style="min-width:0">
-          <div style="font-size:14px;font-weight:800;line-height:1.3;white-space:normal">${m.name}</div>
-          <div style="font-size:10.5px;opacity:.7;margin-top:2px">${ct('member')} · ${m.refCode}</div>
+          <div style="font-size:15px;font-weight:800;line-height:1.32;white-space:normal;letter-spacing:.05px">${m.name}</div>
+          <div style="font-size:10.5px;opacity:.8;margin-top:2px">${ct('member')} · ${m.refCode}</div>
         </div>
       </div>
       <div style="display:flex;align-items:flex-end;justify-content:space-between;position:relative;z-index:1"><div><div style="font-size:10.5px;opacity:.72">${ct('yourPoints')}</div><div class="pts-big">${fmt(m.points)} <span style="font-size:13px">${ct('pts')}</span></div></div><div style="font-size:10.5px;font-weight:700;opacity:.66">Plaai Point</div></div>
     </div>
     ${expBlock}
     ${actTeaser}
-    <div class="card pad" style="margin-top:14px;background:var(--gold-light);border-color:#eeddb0">
+    <div class="card pad portal-referral" style="margin-top:12px">
       <div style="font-size:12px;font-weight:700;color:#8a6a1f">${ct('refTitle')}</div>
       <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px"><code class="mono" style="font-size:16px">${m.refCode}</code><button class="btn gold sm" onclick="copyCode('${m.refCode}')">${ct('copy')}</button></div>
       <div class="muted" style="font-size:11px;margin-top:6px;color:#8a6a1f">${ct('refSub')}</div>
